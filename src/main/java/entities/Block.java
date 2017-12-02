@@ -104,6 +104,10 @@ public class Block implements Serializable {
 				hash, height, confirmations, numtransactions, time.toInstant().toString(), bytesize, blockversion, nonce, merkleroot, prevblockhash, nextblockhash, bits, difficultyrating, transactionHashes);
 		
 	}
+	
+	public String getHash() {
+		return this.hash;
+	}
 
 	public void setTime(Timestamp time) {
 		this.time = time;
