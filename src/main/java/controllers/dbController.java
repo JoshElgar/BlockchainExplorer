@@ -50,7 +50,6 @@ public class DbController {
 				"http://localhost:8332/rest/block/000000000000000000af15c51a1efde4f2078ccc2d7a8a53d32c48b118027878.json");
 
 		CloseableHttpResponse resp;
-
 		try {
 
 			resp = httpclient.execute(httpgetBlock);
@@ -73,8 +72,15 @@ public class DbController {
 				Block generatedBlock = gson.fromJson(blockInfo, Block.class);
 
 				System.out.println("Saving block with hash:" + generatedBlock.getHash());
-
 				blockRepo.save(generatedBlock);
+
+				System.out.println("Saving all transactions of block:" + generatedBlock.getHash());
+				String blockHash = generatedBlock.getHash();
+				for (Transaction t : generatedBlock.getTransactions()) {
+					t.setBlockHash(blockHash);
+				}
+
+				transactionRepo.save(generatedBlock.getTransactions());
 
 				System.out.println("Saved");
 				System.out.println("Finished Syncing");
