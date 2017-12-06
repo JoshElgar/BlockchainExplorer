@@ -30,35 +30,36 @@ public class Block implements Serializable {
 	@Column(name = "confirmations")
 	private int confirmations;
 
-	@Column(name = "numtransactions")
-	private int numtransactions;
-
 	@Column(name = "time")
 	private Timestamp time;
 
+	@SerializedName("strippedsize")
 	@Column(name = "bytesize")
 	private int bytesize;
 
+	@SerializedName("version")
 	@Column(name = "blockversion")
 	private int blockversion;
 
 	@Column(name = "nonce")
-	private int nonce;
+	private long nonce;
 
 	@Column(name = "merkleroot")
 	private String merkleroot;
 
+	@SerializedName("previousblockhash")
 	@Column(name = "prevblockhash")
 	private String prevblockhash;
 
+	@SerializedName("nextblockhash")
 	@Column(name = "nextblockhash")
 	private String nextblockhash;
 
 	@Column(name = "bits")
 	private String bits;
 
-	@Column(name = "difficultyrating")
-	private float difficultyrating;
+	@Column(name = "difficulty")
+	private float difficulty;
 
 	@Transient
 	@JsonInclude()
@@ -70,13 +71,12 @@ public class Block implements Serializable {
 
 	}
 
-	public Block(String hash, int height, int confirmations, int numtransactions, Timestamp time, int bytesize,
-			int blockversion, int nonce, String merkleroot, String prevblockhash, String nextblockhash, String bits,
-			float difficultyrating, List<Transaction> transactions) {
+	public Block(String hash, int height, int confirmations, Timestamp time, int bytesize, int blockversion, long nonce,
+			String merkleroot, String prevblockhash, String nextblockhash, String bits, float difficulty,
+			List<Transaction> transactions) {
 		this.hash = hash;
 		this.height = height;
 		this.confirmations = confirmations;
-		this.numtransactions = numtransactions;
 		this.time = time;
 		this.bytesize = bytesize;
 		this.blockversion = blockversion;
@@ -85,7 +85,7 @@ public class Block implements Serializable {
 		this.prevblockhash = prevblockhash;
 		this.nextblockhash = nextblockhash;
 		this.bits = bits;
-		this.difficultyrating = difficultyrating;
+		this.difficulty = difficulty;
 		this.transactions = transactions;
 	}
 
@@ -93,11 +93,11 @@ public class Block implements Serializable {
 	public String toString() {
 
 		return String.format(
-				"@Block[hash=%s, height=%d, confirmations=%d, numtransactions=%d, time=%s,"
-						+ "bytesize=%d, blockversion=%d, nonce=%d, merkleroot=%s, prevblockhash=%s, nextblockhash=%s,"
-						+ " bits=%s, difficultyrating=%f], transactionCount: %d",
-				hash, height, confirmations, numtransactions, time.toInstant().toString(), bytesize, blockversion,
-				nonce, merkleroot, prevblockhash, nextblockhash, bits, difficultyrating, transactions.size());
+				"@Block[hash=%s, height=%d, confirmations=%d, time=%s, "
+						+ "bytesize=%d, blockversion=%d, nonce=%d, merkleroot=%s, prevblockhash=%s, nextblockhash=%s, "
+						+ "bits=%s, difficulty=%f], transactionCount: %d",
+				hash, height, confirmations, time.toInstant().toString(), bytesize, blockversion, nonce, merkleroot,
+				prevblockhash, nextblockhash, bits, difficulty, transactions.size());
 
 	}
 
@@ -105,12 +105,19 @@ public class Block implements Serializable {
 		return this.hash;
 	}
 
+	public String getPrevBlockHash() {
+		return this.prevblockhash;
+	}
+
 	public List<Transaction> getTransactions() {
 		return this.transactions;
 	}
 
-	public void setTime(Timestamp time) {
-		this.time = time;
+	public int getHeight() {
+		return this.height;
+	}
 
+	public Timestamp getTime() {
+		return this.time;
 	}
 }

@@ -9,5 +9,8 @@ import entities.Block;
 
 @Repository
 public interface BlockRepository extends CrudRepository<Block, String> {
+
 	List<Block> findByHash(String hash);
+
+	long count();
 }
