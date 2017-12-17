@@ -7,8 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.google.gson.annotations.SerializedName;
-
 @Entity // indicates Block is entity
 @Table(name = "transaction") // indicates primary table name for entity Block
 public class Transaction implements Serializable {
@@ -24,7 +22,7 @@ public class Transaction implements Serializable {
 	@Column(name = "txid")
 	private String txid;
 
-	@SerializedName("vsize")
+	// vsize
 	@Column(name = "bytesize")
 	private int bytesize;
 

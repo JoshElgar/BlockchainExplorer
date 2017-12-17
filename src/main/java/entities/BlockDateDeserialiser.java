@@ -1,23 +1,32 @@
 package entities;
 
-import java.lang.reflect.Type;
+import java.io.IOException;
 import java.time.Instant;
 import java.util.Date;
 
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
-public class BlockDateDeserialiser implements JsonDeserializer<Date> {
-	
+public class BlockDateDeserialiser extends StdDeserializer<Date> {
+
+	private static final long serialVersionUID = 1L;
+
+	protected BlockDateDeserialiser(Class<?> vc) {
+		super(vc);
+	}
+
 	@Override
-	   public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-		   
-			String s = json.getAsJsonPrimitive().getAsString();
-			
-		    Date d = Date.from(Instant.ofEpochMilli(Long.parseLong(s)*1000L));
-		    return d;
-			
-		}
+	public Date deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+
+		JsonNode jsonNode = jp.getCodec().readTree(jp);
+
+		String s = jsonNode.get("time").asText();
+
+		Date d = Date.from(Instant.ofEpochMilli(Long.parseLong(s) * 1000L));
+		return d;
+	}
+
 }

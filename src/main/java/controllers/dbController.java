@@ -1,6 +1,5 @@
 package controllers;
 
-import java.util.Date;
 import java.util.List;
 
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -14,14 +13,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import entities.Block;
-import entities.BlockDateDeserialiser;
 import entities.Transaction;
 import repositories.BlockRepository;
 import repositories.TransactionRepository;
@@ -52,14 +47,10 @@ public class DbController {
 			chainResponse = httpclient.execute(httpChainInfo);
 			String chainInfo = EntityUtils.toString(chainResponse.getEntity());
 
-			JsonParser jsonParser = new JsonParser();
-			JsonElement jsonTree = jsonParser.parse(chainInfo);
-
-			if (jsonTree.isJsonObject()) {
-				JsonObject jsonObject = jsonTree.getAsJsonObject();
-				currentBlocks = jsonObject.get("blocks").getAsInt();
-				blockToGet = jsonObject.get("bestblockhash").getAsString();
-			}
+			ObjectMapper mapper = new ObjectMapper();
+			JsonNode tree = mapper.readTree(chainInfo);
+			currentBlocks = tree.get("blocks").asInt();
+			blockToGet = tree.get("bestblockhash").asText();
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -84,8 +75,8 @@ public class DbController {
 					System.out.println("Bitcoind still syncing with network.");
 				} else {
 
-					Gson gson = new GsonBuilder().registerTypeAdapter(Date.class, new BlockDateDeserialiser()).create();
-					Block generatedBlock = gson.fromJson(blockInfo, Block.class);
+					ObjectMapper mapper = new ObjectMapper();
+					Block generatedBlock = mapper.readValue(blockInfo, Block.class);
 
 					if (generatedBlock.getHeight() < minBlockHeight) {
 						System.out.println("Block height less than min block height");
@@ -124,6 +115,12 @@ public class DbController {
 	}
 
 }
+
+// batch block queries:
+// -use GET HEADERS, start from block 495000
+// -get block hashes from header, add to list
+// -craft request objects from list
+// -post crafted requests in a json batch to daemon
 
 // Instant instantTime = Instant.ofEpochMilli(time * 1000L);
 // Timestamp ts = instantTime != null ? new

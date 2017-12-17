@@ -11,7 +11,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.google.gson.annotations.SerializedName;
 
 @Entity // indicates Block is entity
 @Table(name = "block") // indicates primary table name for entity Block
@@ -33,11 +32,11 @@ public class Block implements Serializable {
 	@Column(name = "time")
 	private Timestamp time;
 
-	@SerializedName("strippedsize")
+	// @SerializedName("strippedsize")
 	@Column(name = "bytesize")
 	private int bytesize;
 
-	@SerializedName("version")
+	// @SerializedName("version")
 	@Column(name = "blockversion")
 	private int blockversion;
 
@@ -47,11 +46,11 @@ public class Block implements Serializable {
 	@Column(name = "merkleroot")
 	private String merkleroot;
 
-	@SerializedName("previousblockhash")
+	// @SerializedName("previousblockhash")
 	@Column(name = "prevblockhash")
 	private String prevblockhash;
 
-	@SerializedName("nextblockhash")
+	// @SerializedName("nextblockhash")
 	@Column(name = "nextblockhash")
 	private String nextblockhash;
 
@@ -63,7 +62,7 @@ public class Block implements Serializable {
 
 	@Transient
 	@JsonInclude()
-	@SerializedName("tx")
+	// @SerializedName("tx")
 	private List<Transaction> transactions;
 
 	// 2 constructors: protected used by Spring JPA, public for creating instances
