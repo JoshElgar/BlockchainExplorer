@@ -10,10 +10,14 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @Entity // indicates Block is entity
 @Table(name = "block") // indicates primary table name for entity Block
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Block implements Serializable {
 
 	private static final long serialVersionUID = -3009157732242241606L;
@@ -23,51 +27,63 @@ public class Block implements Serializable {
 	// primary key value
 	private String hash;
 
+	@JsonProperty("height")
 	@Column(name = "height") // mapped column name in table
 	private int height;
 
+	@JsonProperty("confirmations")
 	@Column(name = "confirmations")
 	private int confirmations;
 
+	@JsonDeserialize(using = BlockDateDeserialiser.class)
 	@Column(name = "time")
+	// @JsonFormat
 	private Timestamp time;
 
-	// @SerializedName("strippedsize")
+	@JsonProperty("strippedsize")
 	@Column(name = "bytesize")
 	private int bytesize;
 
-	// @SerializedName("version")
+	@JsonProperty("version")
 	@Column(name = "blockversion")
 	private int blockversion;
 
+	@JsonProperty("nonce")
 	@Column(name = "nonce")
 	private long nonce;
 
+	@JsonProperty("merkleroot")
 	@Column(name = "merkleroot")
 	private String merkleroot;
 
-	// @SerializedName("previousblockhash")
+	@JsonProperty("previousblockhash")
 	@Column(name = "prevblockhash")
 	private String prevblockhash;
 
-	// @SerializedName("nextblockhash")
+	@JsonProperty("nextblockhash")
 	@Column(name = "nextblockhash")
 	private String nextblockhash;
 
+	@JsonProperty("bits")
 	@Column(name = "bits")
 	private String bits;
 
+	@JsonProperty("difficulty")
 	@Column(name = "difficulty")
 	private float difficulty;
 
 	@Transient
 	@JsonInclude()
-	// @SerializedName("tx")
+	@JsonProperty("tx")
 	private List<Transaction> transactions;
 
 	// 2 constructors: protected used by Spring JPA, public for creating instances
 	protected Block() {
 
+	}
+
+	public Block(String hash) {
+		this.hash = hash;
 	}
 
 	public Block(String hash, int height, int confirmations, Timestamp time, int bytesize, int blockversion, long nonce,

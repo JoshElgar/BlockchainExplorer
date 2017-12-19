@@ -1,8 +1,8 @@
 package entities;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.Date;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -10,23 +10,29 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
-public class BlockDateDeserialiser extends StdDeserializer<Date> {
+public class BlockDateDeserialiser extends StdDeserializer<Timestamp> {
 
 	private static final long serialVersionUID = 1L;
 
-	protected BlockDateDeserialiser(Class<?> vc) {
+	public BlockDateDeserialiser() {
+		this(null);
+	}
+
+	public BlockDateDeserialiser(Class<?> vc) {
 		super(vc);
 	}
 
 	@Override
-	public Date deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+	public Timestamp deserialize(JsonParser jp, DeserializationContext ctxt)
+			throws IOException, JsonProcessingException {
 
 		JsonNode jsonNode = jp.getCodec().readTree(jp);
 
-		String s = jsonNode.get("time").asText();
+		String s = jsonNode.asText();
 
-		Date d = Date.from(Instant.ofEpochMilli(Long.parseLong(s) * 1000L));
-		return d;
+		Instant instantTime = Instant.ofEpochMilli(Long.parseLong(s) * 1000L);
+		Timestamp ts = instantTime != null ? new Timestamp(instantTime.toEpochMilli()) : null;
+		return ts;
 	}
 
 }

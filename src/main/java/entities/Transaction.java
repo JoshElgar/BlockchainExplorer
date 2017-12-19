@@ -7,8 +7,12 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @Entity // indicates Block is entity
 @Table(name = "transaction") // indicates primary table name for entity Block
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Transaction implements Serializable {
 
 	private static final long serialVersionUID = -3009157732242241606L;
@@ -16,16 +20,19 @@ public class Transaction implements Serializable {
 	@Id
 	private String hash;
 
+	@JsonProperty("blockhash")
 	@Column(name = "blockhash")
 	private String blockhash;
 
+	@JsonProperty("txid")
 	@Column(name = "txid")
 	private String txid;
 
-	// vsize
+	@JsonProperty("vsize")
 	@Column(name = "bytesize")
 	private int bytesize;
 
+	@JsonProperty("version")
 	@Column(name = "version")
 	private int version;
 
