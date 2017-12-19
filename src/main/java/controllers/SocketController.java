@@ -1,30 +1,31 @@
 package controllers;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 
 import entities.Block;
 
+@EnableScheduling
 @Controller
 public class SocketController {
 
-	@MessageMapping("/testportal/stomptest")
-	@SendTo("/topic/blocks")
-	public Block send(Block block) throws Exception {
-		System.out.println("Time: " + new SimpleDateFormat("HH:mm").format(new Date()));
-		return block;
-	}
+	@Autowired
+	private SimpMessagingTemplate template;
 
-	/*
-	 * @MessageMapping("/testportal/stomptest/info")
-	 * 
-	 * @SendTo("/topic/blocks") public String sendtwo(@RequestParam("t") String t)
-	 * throws Exception { System.out.println("Time: " + new
-	 * SimpleDateFormat("HH:mm").format(new Date())); System.out.println("t: " + t);
-	 * return "CONNECTED"; }
-	 */
+	@Scheduled(fixedRate = 5000)
+	public void stream() {
+
+		System.out.println("scheduled");
+		List<Block> returnBlocks = new ArrayList<Block>();
+		returnBlocks.add(new Block("block1"));
+		returnBlocks.add(new Block("block2"));
+		this.template.convertAndSend("/topic/blocks", returnBlocks);
+
+	}
 }

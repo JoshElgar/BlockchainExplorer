@@ -41,12 +41,12 @@ var error_callback = function(error) {
 }
 
 function connect() {
-    var socket = new SockJS('/testportal/stomptest');
+    var socket = new WebSocket('ws://localhost:8080/testportal/stomptest');
     stompClient = Stomp.over(socket);
     
     stompClient.connect({}, function (frame) {
         //setConnected(true);
-        console.log('Connected: ' + frame);
+        console.log('Connected: \n' + frame);
         stompClient.subscribe('/topic/blocks', function (block) {
             showMessageOutput(JSON.parse(block.body));
         });
@@ -75,8 +75,10 @@ function sendMessage() {
 
 function showMessageOutput(messageOutput) {
     var console = document.getElementById('console');
-    var p = document.createElement('p');
-    p.style.wordWrap = 'break-word';
-    p.appendChild(document.createTextNode("Block " + block.height + ": " + block.time));
-    console.appendChild(p);
+    messageOutput.forEach(function(block) {
+	    var p = document.createElement('p');
+	    p.style.wordWrap = 'break-word';
+	    p.appendChild(document.createTextNode("Block " + block.height + ": " + block.time));
+	    console.appendChild(p);
+    });
 }
