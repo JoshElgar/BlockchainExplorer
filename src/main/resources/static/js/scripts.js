@@ -48,7 +48,7 @@ function connect() {
         //setConnected(true);
         console.log('Connected: \n' + frame);
         stompClient.subscribe('/topic/blocks', function (block) {
-            showMessageOutput(JSON.parse(block.body));
+            processMessage(JSON.parse(block.body));
         });
     }, error_callback)
 }
@@ -72,6 +72,57 @@ function sendMessage() {
         }));
 }
 */
+
+//json blocks array
+var blockList = new Array();
+
+function processMessage(message) {
+//	message is an array of blocks
+	
+//	Add new blocks to global block array
+	message.forEach(function(block) {
+		blockList.push(block);
+	});
+
+	sortBlockList();
+	
+	updateLiveBlocks();
+}
+
+//sort in descending height (highest first)
+function sortBlockList() {
+	blockList.sort(function(a, b) {
+		return parseInt(b.height) - parseInt(a.height);
+	});
+}
+
+function sortLiveBlocks(){
+	liveBlocks.sort(function(a, b) {
+		var contentA = parseInt( $(a).attr('data-height'));
+	    var contentB = parseInt( $(b).attr('data-height'));
+	    return (contentA < contentB) ? 1 : (contentA > contentB) ? -1 : 0;
+	});
+	
+}
+
+//live block element array
+var liveBlocks = new Array();
+
+function updateLiveBlocks() {
+	var blockListContainer = $("#blockListContainer");
+	liveBlocks = blockListContainer.find(".liveBlock");
+	
+	sortLiveBlocks();
+	
+	
+	//get 5 highest blocks
+	var highestBlocks = blockList.slice(0, 4);
+	
+	highestBlocks.forEach(function(block) {
+		console.log("block: " + block);
+	});
+	
+}
 
 function showMessageOutput(messageOutput) {
     var console = document.getElementById('console');

@@ -18,7 +18,7 @@ public class SocketController {
 	@Autowired
 	private SimpMessagingTemplate template;
 
-	@Scheduled(fixedRate = 5000)
+	@Scheduled(fixedDelay = 5000)
 	public void stream() {
 
 		System.out.println("scheduled");
