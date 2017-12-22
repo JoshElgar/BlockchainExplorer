@@ -120,6 +120,7 @@ function updateLiveBlocks() {
 	
 	highestBlocks.forEach(function(block) {
 		console.log("block: " + block);
+		
 	});
 	
 }
