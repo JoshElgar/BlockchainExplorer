@@ -23,6 +23,7 @@
     <!-- StompJS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+
     <!--  User JS -->
     <script src="/js/scripts.js"></script>
 
@@ -50,6 +51,21 @@
         </div>
         <div class="row">
             <div id="blockListContainer" class="blockListContainer col">
+                <table id="latestBlockTable" class="table table-bordered table-hover table-sm">
+                    <thead class="thead-inverse">
+                        <tr>
+                            <th>Height</th>
+                            <th>Transactions</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+
+
+                </table>
+
+                <!--
                 <div class="liveBlock" data-height="1">
                     <div class="blockHeight">500</div>
                     <div class="blockHash">6f7f8f9f</div>
@@ -58,6 +74,7 @@
                     <div class="blockHeight">600</div>
                     <div class="blockHash">6</div>
                 </div>
+                -->
             </div>
         </div>
     </div>

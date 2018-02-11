@@ -31,11 +31,17 @@ public class Block implements Serializable {
 	@Column(name = "height") // mapped column name in table
 	private int height;
 
+	@Transient
+	@JsonInclude()
+	@JsonProperty("numTx")
+	private int numTx;
+
 	@JsonProperty("confirmations")
 	@Column(name = "confirmations")
 	private int confirmations;
 
 	@JsonDeserialize(using = BlockDateDeserialiser.class)
+	@JsonProperty("time")
 	@Column(name = "time")
 	// @JsonFormat
 	private Timestamp time;
@@ -84,6 +90,12 @@ public class Block implements Serializable {
 
 	public Block(String hash) {
 		this.hash = hash;
+	}
+
+	public Block(int height, int numTx, Timestamp time) {
+		this.height = height;
+		this.numTx = numTx;
+		this.time = time;
 	}
 
 	public Block(String hash, int height, int confirmations, Timestamp time, int bytesize, int blockversion, long nonce,

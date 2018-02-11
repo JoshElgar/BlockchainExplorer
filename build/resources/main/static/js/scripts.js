@@ -2,7 +2,8 @@ $(document).ready(function () {
 
 
     $(".portalControls").find(".syncButton").click(triggerSync);
-
+    //connect();
+    
 });
 
 function triggerSync(e) {
@@ -27,30 +28,21 @@ function writeToConsole(consoleText) {
 
 var stompClient = null;
 
-/*
-function setConnected(connected) {
-    document.getElementById('connect').disabled = connected;
-    document.getElementById('disconnect').disabled = !connected;
-    document.getElementById('conversationDiv').style.visibility 
-      = connected ? 'visible' : 'hidden';
-    document.getElementById('response').innerHTML = '';
-}
-*/
 var error_callback = function(error) {
     console.log(error);
 }
 
 function connect() {
-    var socket = new SockJS('/testportal/stomptest');
+    var socket = new WebSocket('ws://localhost:8080/testportal/stomptest');
     stompClient = Stomp.over(socket);
     
     stompClient.connect({}, function (frame) {
         //setConnected(true);
-        console.log('Connected: ' + frame);
+        console.log('Connected: \n' + frame);
         stompClient.subscribe('/topic/blocks', function (block) {
-            showMessageOutput(JSON.parse(block.body));
+            processMessage(JSON.parse(block.body));
         });
-    }, error_callback)
+    }, error_callback);
 }
                         
 
@@ -73,10 +65,71 @@ function sendMessage() {
 }
 */
 
+//json blocks array
+var blockList = new Array();
+
+function processMessage(message) {
+//	message is an array of blocks
+    blockList = [];
+	
+//	Add new blocks to global block array
+	message.forEach(function(block) {
+		blockList.push(block);
+	});
+
+	sortBlockList();
+	
+	updateLiveBlocks();
+}
+
+//sort in descending height (highest first)
+function sortBlockList() {
+	blockList.sort(function(a, b) {
+		return parseInt(b.height) - parseInt(a.height);
+	});
+}
+
+//live block element array
+var liveBlocks = new Array();
+
+function updateLiveBlocks() {
+	liveBlocksTable = $("#latestBlockTable");
+	
+	sortLiveBlocks();
+	
+	
+	//get 5 highest blocks
+	var highestBlocks = blockList.slice(0, 5);
+	
+	highestBlocks.forEach(function(block) {
+		console.log("block: " + block);
+		var blockRow = "<tr><td>" + block.height + "</td><td>" + block.numTx + "</td><td>" + block.time + "</td></tr>";
+        liveBlocksTable.first("tbody").append(blockRow);
+    });
+    
+    var n = liveBlocksTable.find("div").length - 5;
+    if (n > 0) {
+        liveBlocksTable.slice(-n).remove();
+    }
+}
+
+function sortLiveBlocks(){
+	liveBlocks.sort(function(a, b) {
+		var contentA = parseInt( $(a).attr('data-height'));
+	    var contentB = parseInt( $(b).attr('data-height'));
+	    return (contentA < contentB) ? 1 : (contentA > contentB) ? -1 : 0;
+	});
+	
+}
+
+
+
 function showMessageOutput(messageOutput) {
     var console = document.getElementById('console');
-    var p = document.createElement('p');
-    p.style.wordWrap = 'break-word';
-    p.appendChild(document.createTextNode("Block " + block.height + ": " + block.time));
-    console.appendChild(p);
+    messageOutput.forEach(function(block) {
+	    var p = document.createElement('p');
+	    p.style.wordWrap = 'break-word';
+	    p.appendChild(document.createTextNode("Block " + block.height + ": " + block.time));
+	    console.appendChild(p);
+    });
 }

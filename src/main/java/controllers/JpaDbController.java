@@ -2,6 +2,8 @@ package controllers;
 
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.HttpHostConnectException;
@@ -9,6 +11,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -21,8 +25,12 @@ import entities.Transaction;
 import repositories.BlockRepository;
 import repositories.TransactionRepository;
 
+@EnableScheduling
 @Controller
-public class DbController {
+public class JpaDbController {
+
+	@Autowired
+	DataSource ds;
 
 	@Autowired
 	BlockRepository blockRepo;
@@ -30,18 +38,20 @@ public class DbController {
 	@Autowired
 	TransactionRepository transactionRepo;
 
+	@Scheduled(fixedDelay = 60000)
 	@RequestMapping(value = "/testportal/sync")
 	@ResponseBody
 	public String sync() {
 
-		System.out.println("Syncing block.");
+		System.out.println("Syncing database with blockchain.");
 
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 		CloseableHttpResponse blockResponse, chainResponse;
 		int currentBlocks = 0;
 		String blockToGet = "";
-
-		// get block height + latest block hash
+		/*
+		 * get block height + latest block hash
+		 */
 		HttpGet httpChainInfo = new HttpGet("http://localhost:8332/rest/chaininfo.json");
 		try {
 			chainResponse = httpclient.execute(httpChainInfo);
@@ -59,7 +69,7 @@ public class DbController {
 		// does repo contain latest block hash
 		List<Block> matchingBlocks = blockRepo.findByHash(blockToGet);
 
-		int minBlockHeight = currentBlocks - 20; // for testing
+		int minBlockHeight = currentBlocks - 5; // for testing
 		// there are no matching blocks in DB + wrong count in DB
 		boolean syncedAll = (!(matchingBlocks.isEmpty()) && (blockRepo.count() == (currentBlocks - minBlockHeight)));
 

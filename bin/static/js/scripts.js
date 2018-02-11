@@ -2,7 +2,8 @@ $(document).ready(function () {
 
 
     $(".portalControls").find(".syncButton").click(triggerSync);
-
+    //connect();
+    
 });
 
 function triggerSync(e) {
@@ -27,15 +28,6 @@ function writeToConsole(consoleText) {
 
 var stompClient = null;
 
-/*
-function setConnected(connected) {
-    document.getElementById('connect').disabled = connected;
-    document.getElementById('disconnect').disabled = !connected;
-    document.getElementById('conversationDiv').style.visibility 
-      = connected ? 'visible' : 'hidden';
-    document.getElementById('response').innerHTML = '';
-}
-*/
 var error_callback = function(error) {
     console.log(error);
 }
@@ -50,7 +42,7 @@ function connect() {
         stompClient.subscribe('/topic/blocks', function (block) {
             processMessage(JSON.parse(block.body));
         });
-    }, error_callback)
+    }, error_callback);
 }
                         
 
@@ -78,6 +70,7 @@ var blockList = new Array();
 
 function processMessage(message) {
 //	message is an array of blocks
+    blockList = [];
 	
 //	Add new blocks to global block array
 	message.forEach(function(block) {
@@ -96,6 +89,30 @@ function sortBlockList() {
 	});
 }
 
+//live block element array
+var liveBlocks = new Array();
+
+function updateLiveBlocks() {
+	liveBlocksTable = $("#latestBlockTable");
+	
+	sortLiveBlocks();
+	
+	
+	//get 5 highest blocks
+	var highestBlocks = blockList.slice(0, 5);
+	
+	highestBlocks.forEach(function(block) {
+		console.log("block: " + block);
+		var blockRow = "<tr><td>" + block.height + "</td><td>" + block.numTx + "</td><td>" + block.time + "</td></tr>";
+        liveBlocksTable.first("tbody").append(blockRow);
+    });
+    
+    var n = liveBlocksTable.find("div").length - 5;
+    if (n > 0) {
+        liveBlocksTable.slice(-n).remove();
+    }
+}
+
 function sortLiveBlocks(){
 	liveBlocks.sort(function(a, b) {
 		var contentA = parseInt( $(a).attr('data-height'));
@@ -105,25 +122,7 @@ function sortLiveBlocks(){
 	
 }
 
-//live block element array
-var liveBlocks = new Array();
 
-function updateLiveBlocks() {
-	var blockListContainer = $("#blockListContainer");
-	liveBlocks = blockListContainer.find(".liveBlock");
-	
-	sortLiveBlocks();
-	
-	
-	//get 5 highest blocks
-	var highestBlocks = blockList.slice(0, 4);
-	
-	highestBlocks.forEach(function(block) {
-		console.log("block: " + block);
-		
-	});
-	
-}
 
 function showMessageOutput(messageOutput) {
     var console = document.getElementById('console');
