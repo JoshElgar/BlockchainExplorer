@@ -33,7 +33,7 @@ var error_callback = function(error) {
 }
 
 function connect() {
-    var socket = new WebSocket('ws://localhost:8080/testportal/stomptest');
+    var socket = new WebSocket('ws://localhost:8080/socket');
     stompClient = Stomp.over(socket);
     
     stompClient.connect({}, function (frame) {
@@ -53,17 +53,15 @@ function disconnect() {
     //setConnected(false);
     console.log("Disconnected");
 }
-/*
-function sendMessage() {
-    var from = document.getElementById('from').value;
-    var text = document.getElementById('text').value;
-    stompClient.send("/app/stomptest", {},
-        JSON.stringify({
-            'from': from,
-            'text': text
-        }));
+
+var lastBlockHeight;
+
+function updateLastBlock() {
+    stompClient.send("/app/socket/updateLastBlock", {}, lastBlockHeight);
+        //JSON.stringify({'lastBlockHeight': 508833,}));
+                     
 }
-*/
+
 
 //json blocks array
 var blockList = new Array();
@@ -74,10 +72,13 @@ function processMessage(message) {
 	
 //	Add new blocks to global block array
 	message.forEach(function(block) {
-		blockList.push(block);
+		blockList.unshift(block);
 	});
+    
+    lastBlockHeight = blockList[blockList.length - 1].height;
+    updateLastBlock();
 
-	sortBlockList();
+	//sortBlockList();
 	
 	updateLiveBlocks();
 }
@@ -89,38 +90,25 @@ function sortBlockList() {
 	});
 }
 
-//live block element array
-var liveBlocks = new Array();
-
 function updateLiveBlocks() {
 	liveBlocksTable = $("#latestBlockTable");
-	
-	sortLiveBlocks();
-	
 	
 	//get 5 highest blocks
 	var highestBlocks = blockList.slice(0, 5);
 	
 	highestBlocks.forEach(function(block) {
-		console.log("block: " + block);
 		var blockRow = "<tr><td>" + block.height + "</td><td>" + block.numTx + "</td><td>" + block.time + "</td></tr>";
-        liveBlocksTable.first("tbody").append(blockRow);
+        liveBlocksTable.first("tbody").prepend(blockRow);
     });
     
-    var n = liveBlocksTable.find("div").length - 5;
+    //one tr is the header row
+    var n = liveBlocksTable.find("tr").length - 6;
     if (n > 0) {
-        liveBlocksTable.slice(-n).remove();
+        //remove last N <tr> elements
+        liveBlocksTable.find("tr").slice(-n).remove();
     }
 }
 
-function sortLiveBlocks(){
-	liveBlocks.sort(function(a, b) {
-		var contentA = parseInt( $(a).attr('data-height'));
-	    var contentB = parseInt( $(b).attr('data-height'));
-	    return (contentA < contentB) ? 1 : (contentA > contentB) ? -1 : 0;
-	});
-	
-}
 
 
 

@@ -39,7 +39,7 @@ public class JpaDbController {
 	TransactionRepository transactionRepo;
 
 	@Scheduled(fixedDelay = 60000)
-	@RequestMapping(value = "/testportal/sync")
+	@RequestMapping(value = "/db/sync")
 	@ResponseBody
 	public String sync() {
 
@@ -66,12 +66,11 @@ public class JpaDbController {
 			e.printStackTrace();
 		}
 
+		int minBlockHeight = currentBlocks - 5; // for testing
+
 		// does repo contain latest block hash
 		List<Block> matchingBlocks = blockRepo.findByHash(blockToGet);
-
-		int minBlockHeight = currentBlocks - 5; // for testing
-		// there are no matching blocks in DB + wrong count in DB
-		boolean syncedAll = (!(matchingBlocks.isEmpty()) && (blockRepo.count() == (currentBlocks - minBlockHeight)));
+		boolean syncedAll = (matchingBlocks.isEmpty() ? false : true);
 
 		while (!syncedAll) {
 			try {
@@ -88,37 +87,38 @@ public class JpaDbController {
 					ObjectMapper mapper = new ObjectMapper();
 					Block generatedBlock = mapper.readValue(blockInfo, Block.class);
 
+					// if not recent block
 					if (generatedBlock.getHeight() < minBlockHeight) {
-						System.out.println("Block height less than min block height");
+						System.out.println("Not one of the last 5 blocks");
 						syncedAll = true;
 						return "Synced all.";
 					} else {
-						// sync transactions
+						// save block and its transactions
 
 						System.out.println("Saving block with hash:" + generatedBlock.getHash());
 						blockRepo.save(generatedBlock);
 
-						System.out.println("Saving all transactions of block:" + generatedBlock.getHash());
 						String blockHash = generatedBlock.getHash();
 						for (Transaction t : generatedBlock.getTransactions()) {
 							t.setBlockHash(blockHash);
 						}
 
 						transactionRepo.save(generatedBlock.getTransactions());
-						System.out.println("Finished Syncing");
-
 					}
 
 					blockToGet = generatedBlock.getPrevBlockHash();
 					matchingBlocks = blockRepo.findByHash(blockToGet);
-					System.out.println("Blocks in repo: " + blockRepo.count());
-					syncedAll = (!(matchingBlocks.isEmpty())
-							&& (blockRepo.count() == (currentBlocks - minBlockHeight)));
+
+					syncedAll = (matchingBlocks.isEmpty() ? false : true);
 				}
+
 			} catch (HttpHostConnectException e) {
+				e.printStackTrace();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+
+			System.out.println("Blocks in repo: " + blockRepo.count());
 
 		}
 		return "Finished syncing.";
