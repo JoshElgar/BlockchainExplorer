@@ -40,7 +40,10 @@ function connect() {
         //setConnected(true);
         console.log('Connected: \n' + frame);
         stompClient.subscribe('/topic/blocks', function (block) {
-            processMessage(JSON.parse(block.body));
+            processBlockMessage(JSON.parse(block.body));
+        });
+        stompClient.subscribe('/topic/tx', function (tx) {
+            processTxMessage(JSON.parse(tx.body));
         });
     }, error_callback);
 }
@@ -56,28 +59,49 @@ function disconnect() {
 
 var lastBlockHeight;
 
-function updateLastBlock() {
-    stompClient.send("/app/socket/updateLastBlock", {}, lastBlockHeight);
-        //JSON.stringify({'lastBlockHeight': 508833,}));
-                     
+function updateLastBlockHeight() {
+    stompClient.send("/app/socket/updateLastBlockHeight", {}, lastBlockHeight);                     
 }
 
+var lastTxSerial;
+
+function updateLastTxSerial() {
+    stompClient.send("/app/socket/updateLastTxSerial", {}, lastTxSerial);                     
+}
 
 //json blocks array
 var blockList = new Array();
 
-function processMessage(message) {
+function processBlockMessage(message) {
 //	message is an array of blocks
     blockList = [];
 	
 //	Add new blocks to global block array
 	message.forEach(function(block) {
-		blockList.push(block);
+		blockList.unshift(block);
 	});
+    
+    lastBlockHeight = blockList[blockList.length - 1].height;
+    updateLastBlockHeight();
 
-	sortBlockList();
+	//sortBlockList();
 	
 	updateLiveBlocks();
+}
+
+var txList = new Array();
+
+function processTxMessage(message) {
+    txList = [];
+    
+    message.forEach(function(tx) {
+        txList.unshift(tx);
+    });
+    
+    lastTxSerial = txList[txList.length - 1].serialId;
+    updateLastTxSerial();
+    
+    updateLiveTx();
 }
 
 //sort in descending height (highest first)
@@ -88,32 +112,39 @@ function sortBlockList() {
 }
 
 function updateLiveBlocks() {
-	liveBlocksTable = $("#latestBlockTable");
+	liveBlockTable = $("#liveBlockTable");
 	
 	//get 5 highest blocks
-	var highestBlocks = blockList.slice(0, 4);
+	var highestBlocks = blockList.slice(0, 5);
 	
 	highestBlocks.forEach(function(block) {
-		console.log("block: " + block);
 		var blockRow = "<tr><td>" + block.height + "</td><td>" + block.numTx + "</td><td>" + block.time + "</td></tr>";
-        liveBlocksTable.first("tbody").append(blockRow);
+        liveBlockTable.first("tbody").prepend(blockRow);
     });
     
-    var n = liveBlocksTable.find("div").length - 5;
+    //one tr is the header row
+    var n = liveBlockTable.find("tr").length - 6;
     if (n > 0) {
-        liveBlocksTable.slice(-n).remove();
+        //remove last N <tr> elements
+        liveBlockTable.find("tr").slice(-n).remove();
     }
 }
 
-
-
-
-function showMessageOutput(messageOutput) {
-    var console = document.getElementById('console');
-    messageOutput.forEach(function(block) {
-	    var p = document.createElement('p');
-	    p.style.wordWrap = 'break-word';
-	    p.appendChild(document.createTextNode("Block " + block.height + ": " + block.time));
-	    console.appendChild(p);
+function updateLiveTx() {
+    liveTxTable = $("#liveTxTable");
+    
+    //get 10 highest tx
+    var highestTxs = txList.slice(0, 10);
+    
+    highestTxs.forEach(function(tx) {
+        var txRow = "<tr><td>" + tx.hash + "</td></tr>";
+        liveTxTable.first("tbody").prepend(txRow);
     });
+    
+    //one tr is the header row
+    var n = liveTxTable.find("tr").length - 11;
+    if (n > 0) {
+        //remove last N <tr> elements
+        liveTxTable.find("tr").slice(-n).remove();
+    }
 }
