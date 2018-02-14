@@ -16,15 +16,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @Entity // indicates Block is entity
-@Table(name = "block") // indicates primary table name for entity Block
+@Table(name = "block")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Block implements Serializable {
 
 	private static final long serialVersionUID = -3009157732242241606L;
 
 	@Id // primary key
-	// @GeneratedValue(strategy = GenerationType.AUTO) //generation strategy for
-	// primary key value
 	private String hash;
 
 	@JsonProperty("height")

@@ -12,5 +12,7 @@ public interface BlockRepository extends CrudRepository<Block, String> {
 
 	List<Block> findByHash(String hash);
 
+	Block findFirstByOrderByHeightDesc();
+
 	long count();
 }

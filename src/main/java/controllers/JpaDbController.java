@@ -36,7 +36,7 @@ public class JpaDbController {
 	BlockRepository blockRepo;
 
 	@Autowired
-	TransactionRepository transactionRepo;
+	TransactionRepository txRepo;
 
 	@Scheduled(fixedDelay = 60000)
 	@RequestMapping(value = "/db/sync")
@@ -62,6 +62,9 @@ public class JpaDbController {
 			currentBlocks = tree.get("blocks").asInt();
 			blockToGet = tree.get("bestblockhash").asText();
 
+		} catch (HttpHostConnectException e) {
+			System.out.println("Could not connect to daemon : probably offline");
+			return null;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -103,7 +106,7 @@ public class JpaDbController {
 							t.setBlockHash(blockHash);
 						}
 
-						transactionRepo.save(generatedBlock.getTransactions());
+						txRepo.save(generatedBlock.getTransactions());
 					}
 
 					blockToGet = generatedBlock.getPrevBlockHash();
