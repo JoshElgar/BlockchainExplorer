@@ -2,7 +2,7 @@ $(document).ready(function () {
 
 
     $(".portalControls").find(".syncButton").click(triggerSync);
-    //connect();
+    connect();
     
 });
 
@@ -118,9 +118,9 @@ function updateLiveBlocks() {
 	var highestBlocks = blockList.slice(0, 5);
 	
 	highestBlocks.forEach(function(block) {
-        var blockDate = new Date(block.time);
+        var blockDate = new Date(block.time).toUTCString();
         
-		var blockRow = "<tr><td>" + block.height + "</td><td>" + block.numTx + "</td><td>" + blockDate.toUTCString + "</td></tr>";
+		var blockRow = "<tr><td>" + block.height + "</td><td>" + block.numTx + "</td><td>" + blockDate + "</td></tr>";
         liveBlockTable.first("tbody").prepend(blockRow);
     });
     

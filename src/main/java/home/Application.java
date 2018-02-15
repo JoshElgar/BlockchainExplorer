@@ -14,7 +14,8 @@ import repositories.BlockRepository;
 
 @EnableJpaRepositories("repositories")
 @EntityScan("entities")
-@SpringBootApplication(scanBasePackages = { "home", "controllers", "entities", "repositories", "configs", "listeners" })
+@SpringBootApplication(scanBasePackages = { "home", "controllers", "services", "entities", "repositories", "configs",
+		"listeners" })
 @EnableAutoConfiguration
 public class Application {
 
