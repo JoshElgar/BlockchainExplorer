@@ -1,31 +1,11 @@
 $(document).ready(function () {
-
-
-    $(".portalControls").find(".syncButton").click(triggerSync);
     connect();
-    
 });
-
-function triggerSync(e) {
-    e.preventDefault();
-    $.ajax({
-        type: "GET",
-        url: "http://localhost:8080/testportal/sync",
-        dataType: "text",
-        success: writeToConsole,
-        error: writeToConsole
-    });
-}
-
-function writeToConsole(consoleText) {
-    $(".portalConsole").text(consoleText);
-}
 
 
 /*
     Browser STOMP client (with SockJS)
 */
-
 var stompClient = null;
 
 var error_callback = function(error) {
@@ -119,8 +99,8 @@ function updateLiveBlocks() {
 	
 	highestBlocks.forEach(function(block) {
         var blockDate = new Date(block.time).toUTCString();
-        
-		var blockRow = "<tr><td>" + block.height + "</td><td>" + block.numTx + "</td><td>" + blockDate + "</td></tr>";
+        var link = "http://localhost:8080/block/" + block.hash;
+		var blockRow = "<tr><td><a href='" + link + "'>" + block.height + "</td><td>" + block.numTx + "</td><td>" + blockDate + "</td></tr>";
         liveBlockTable.first("tbody").prepend(blockRow);
     });
     
@@ -139,7 +119,8 @@ function updateLiveTx() {
     var highestTxs = txList.slice(0, 10);
     
     highestTxs.forEach(function(tx) {
-        var txRow = "<tr><td>" + tx.hash + "</td></tr>";
+        var link = "http://localhost:8080/transaction/" + tx.hash;
+        var txRow = "<tr><td><a href='" + link + "'>" + tx.hash + "</a></td></tr>";
         liveTxTable.first("tbody").prepend(txRow);
     });
     

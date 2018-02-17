@@ -4,13 +4,13 @@
 <html>
 
 <head>
-    <title>Test Portal</title>
+    <title>Home</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
     </link>
-    
+
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 
@@ -27,12 +27,51 @@
     </link>
 
     <!--  User JS -->
-    <script src="/js/scripts.js"></script> 
+    <script src="/js/homeScript.js"></script>
 
 </head>
 
 <body>
-    <div class="container-fluid">
+    <div class="container-fluid full-page">
+
+        <nav class="navbar top-bar">
+            <a class="navbar-brand" href="http://localhost:8080/home">Home</a>
+        </nav>
+        <div class="home-page">
+            
+            <div class="row home-page-panel">
+            <div id="blockListContainer" class="blockListContainer col">
+                <table id="liveBlockTable" class="table table-inverse table-bordered table-hover table-sm">
+                    <thead class="thead-inverse">
+                        <tr>
+                            <th>Height</th>
+                            <th>Transactions</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+
+
+                </table>
+                
+                <table id="liveTxTable" class="table table-bordered table-hover table-sm">
+                    <thead class="thead-inverse">
+                        <tr>
+                            <th>Newest Transactions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+
+
+                </table>
+            </div>
+        </div>
+            
+            
+        </div>
+
     </div>
 </body>
 

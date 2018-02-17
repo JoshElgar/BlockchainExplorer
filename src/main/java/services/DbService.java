@@ -114,7 +114,7 @@ public class DbService {
 				Timestamp time = rs.getTimestamp("time");
 				int numTx = getNumTxForBlockHash(hash);
 
-				blocks.add(new Block(height, numTx, time));
+				blocks.add(new Block(hash, height, numTx, time));
 				System.out.println("Potential block added: " + height + " " + numTx + " " + time);
 
 			}

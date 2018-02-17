@@ -89,7 +89,8 @@ public class Block implements Serializable {
 		this.hash = hash;
 	}
 
-	public Block(int height, int numTx, Timestamp time) {
+	public Block(String hash, int height, int numTx, Timestamp time) {
+		this.hash = hash;
 		this.height = height;
 		this.numTx = numTx;
 		this.time = time;

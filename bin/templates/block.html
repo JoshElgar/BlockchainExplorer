@@ -4,7 +4,7 @@
 <html>
 
 <head>
-    <title>Test Portal</title>
+    <title th:text="'Block #' + __${block.height}__">Block</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
     <!-- Bootstrap CSS -->
@@ -35,9 +35,9 @@
     <div class="container-fluid full-page">
 
         <nav class="navbar top-bar">
-            <a class="navbar-brand" href="localhost:8080/home" th:text="'Block #' + __${block.height}__">Block</a>
+            <a class="navbar-brand" href="http://localhost:8080/home" th:text="'Block #' + __${block.height}__">Block</a>
         </nav>
-        <div class="block-page">
+        <div class="home-page">
             <div class="blockCard">
 
                 <table class="table table-responsive blockCardTable">

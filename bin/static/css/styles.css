@@ -30,6 +30,7 @@ DB TESTING PORTAL
 
 .blockListContainer {
     margin-top: 2rem;
+    padding: 0rem;
 }
 
 /*Block.html*/
@@ -60,16 +61,19 @@ a.navbar-brand {
     
 }
 
-.block-page {
+.home-page {
     padding: 0rem;
     min-height: 100%;
-    /*background: rgba(209,204,220, 1);*/
     background:
       linear-gradient(217deg, rgba(209,204,220,.8), rgba(255,0,0,0) 70.71%),
       linear-gradient(127deg, rgba(142,177,199,.8), rgba(0,255,0,0) 70.71%),
       linear-gradient(336deg, rgba(154,160,168,.8), rgba(0,0,255,0) 70.71%),
         linear-gradient(37deg, rgba(154,160,168,.8), rgba(0,0,255,0) 70.71%);
     overflow: auto;
+}
+
+.home-page-panel {
+    margin: 0rem 10rem;;
 }
 
 .blockCard {
