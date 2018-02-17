@@ -28,14 +28,18 @@ public class WebController {
 		return "home";
 	}
 
-	@RequestMapping(value = "/block")
+	@RequestMapping(value = "/block/{blockHash}")
 	public String servePage(@PathVariable("blockHash") String blockHash, Model m) {
 		System.out.println("Serving block.html");
 
 		Map<String, Object> attribs = new HashMap<String, Object>();
 
-		// try and retrieve block from DB, fallback to querying daemon
+		switch (blockHash) {
+		case "test":
+			blockHash = "00000000000000000024fb37364cbf81fd49cc2d51c09c75c35433c3a1945d04";
+		}
 
+		// try and retrieve block from DB, fallback to querying daemon
 		Block block = dbService.blockRepo.findFirstByHash(blockHash);
 
 		if (block == null) {

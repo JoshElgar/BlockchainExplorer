@@ -32,6 +32,7 @@ public class BlockDateDeserialiser extends StdDeserializer<Timestamp> {
 
 		Instant instantTime = Instant.ofEpochMilli(Long.parseLong(s) * 1000L);
 		Timestamp ts = instantTime != null ? new Timestamp(instantTime.toEpochMilli()) : null;
+
 		return ts;
 	}
 

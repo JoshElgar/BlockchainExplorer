@@ -14,8 +14,7 @@ import repositories.BlockRepository;
 
 @EnableJpaRepositories("repositories")
 @EntityScan("entities")
-@SpringBootApplication(scanBasePackages = { "home", "controllers", "services", "entities", "repositories", "configs",
-		"listeners" })
+@SpringBootApplication(scanBasePackages = { "home", "controllers", "services", "entities", "repositories", "configs" })
 @EnableAutoConfiguration
 public class Application {
 
@@ -24,11 +23,6 @@ public class Application {
 
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
-	}
-
-	public void run(String arg0) throws Exception {
-		// clear all record if existed before do the tutorial with new data
-		repository.deleteAll();
 	}
 
 	@Bean

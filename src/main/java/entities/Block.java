@@ -41,7 +41,6 @@ public class Block implements Serializable {
 	@JsonDeserialize(using = BlockDateDeserialiser.class)
 	@JsonProperty("time")
 	@Column(name = "time")
-	// @JsonFormat
 	private Timestamp time;
 
 	@JsonProperty("strippedsize")
@@ -130,19 +129,55 @@ public class Block implements Serializable {
 		return this.hash;
 	}
 
-	public String getPrevBlockHash() {
-		return this.prevblockhash;
-	}
-
-	public List<Transaction> getTransactions() {
-		return this.transactions;
-	}
-
 	public int getHeight() {
 		return this.height;
 	}
 
+	public int getNumTx() {
+		return this.numTx;
+	}
+
+	public int getConfirmations() {
+		return this.confirmations;
+	}
+
 	public Timestamp getTime() {
 		return this.time;
+	}
+
+	public int getByteSize() {
+		return this.bytesize;
+	}
+
+	public int getBlockVersion() {
+		return this.blockversion;
+	}
+
+	public long getNonce() {
+		return this.nonce;
+	}
+
+	public String getMerkleroot() {
+		return this.merkleroot;
+	}
+
+	public String getPrevBlockHash() {
+		return this.prevblockhash;
+	}
+
+	public String getNextBlockHash() {
+		return this.nextblockhash;
+	}
+
+	public String getBits() {
+		return this.bits;
+	}
+
+	public float getDifficulty() {
+		return this.difficulty;
+	}
+
+	public List<Transaction> getTransactions() {
+		return this.transactions;
 	}
 }
