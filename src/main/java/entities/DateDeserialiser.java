@@ -10,15 +10,15 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
-public class BlockDateDeserialiser extends StdDeserializer<Timestamp> {
+public class DateDeserialiser extends StdDeserializer<Timestamp> {
 
 	private static final long serialVersionUID = 1L;
 
-	public BlockDateDeserialiser() {
+	public DateDeserialiser() {
 		this(null);
 	}
 
-	public BlockDateDeserialiser(Class<?> vc) {
+	public DateDeserialiser(Class<?> vc) {
 		super(vc);
 	}
 

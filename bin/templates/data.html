@@ -4,7 +4,7 @@
 <html>
 
 <head>
-    <title>Home</title>
+    <title>Data</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
     <!-- Bootstrap CSS -->
@@ -13,6 +13,7 @@
 
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
 
     <!-- Bootstrap JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
@@ -27,7 +28,7 @@
     </link>
 
     <!--  User JS -->
-    <script src="/js/homeScript.js"></script>
+    <script src="../static/js/dataScript.js" th:src="@{/js/dataScript.js}"></script>
 
 </head>
 
@@ -35,41 +36,29 @@
     <div class="container-fluid full-page">
 
         <nav class="navbar top-bar">
-            <a class="navbar-brand" href="http://localhost:8080/home">Home</a>
+            <a class="navbar-brand" href="http://localhost:8080/home">Data</a>
         </nav>
         <div class="whole-page">
-            
-            <div class="row page-panel">
-            <div id="blockListContainer" class="blockListContainer col">
-                <table id="liveBlockTable" class="table table-inverse table-bordered table-hover table-sm">
-                    <thead class="thead-inverse">
-                        <tr>
-                            <th>Height</th>
-                            <th>Transactions</th>
-                            <th>Time</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
+            <div class="page-panel">
 
-
-                </table>
+                <div class="data-widget">
+                    <canvas id="chart1"></canvas>
+                </div>
                 
-                <table id="liveTxTable" class="table table-bordered table-hover table-sm">
-                    <thead class="thead-inverse">
-                        <tr>
-                            <th>Newest Transactions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-
-
-                </table>
+                <div class="data-widget">
+                    <canvas id="chart2"></canvas>
+                </div>
+                
+                <div class="data-widget">
+                    <canvas id="chart3"></canvas>
+                </div>
+                
+                
+                
+                
+                
+                
             </div>
-        </div>
-            
-            
         </div>
 
     </div>

@@ -1,0 +1,101 @@
+<!DOCTYPE HTML>
+
+
+<html>
+
+<head>
+    <title>Tx</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    </link>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+    <!-- StompJS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+
+    <!-- User CSS -->
+    <link rel="stylesheet" href="../static/css/styles.css" th:href="@{/css/styles.css}">
+    </link>
+
+</head>
+
+<body>
+    <div class="container-fluid full-page">
+
+        <nav class="navbar top-bar">
+            <a class="navbar-brand" href="http://localhost:8080/home" th:text="'Transaction #' + __${tx.hash}__">Tx</a>
+        </nav>
+            <div class="card">
+
+                <table class="table table-responsive card-table">
+                    <tbody>
+                        
+                        
+                        <tr>
+                            <td class="table-label">
+                                Hash
+                            </td>
+                            <td id="hash-value" class="table-value" th:text="${tx.hash}?: 'null'">
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="table-label">
+                                Block Hash
+                            </td>
+                            <td id="version-value" class="table-value">
+                                <a th:text="${tx.blockHash}?: 'null'" th:href="@{http://localhost:8080/block/{blockHash}(blockHash=${tx.blockHash})}"></a>
+                                
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="table-label">
+                                Time
+                            </td>
+                            <td id="time-value" class="table-value" th:text="${tx.time}?: 'null'">
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="table-label">
+                                Txid
+                            </td>
+                            <td id="time-value" class="table-value" th:text="${tx.txid}?: 'null'">
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="table-label">
+                                Byte Size
+                            </td>
+                            <td id="bits-value" class="table-value" th:text="${tx.ByteSize}?: 'null'">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="table-label">
+                                Version
+                            </td>
+                            <td id="version-value" class="table-value" th:text="${tx.version}?: 'null'">
+                            </td>
+                        </tr>
+
+
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+
+    </div>
+</body>
+
+</html>

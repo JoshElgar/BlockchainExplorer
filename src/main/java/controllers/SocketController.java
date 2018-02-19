@@ -47,7 +47,7 @@ public class SocketController {
 
 		List<Block> returnBlocks = dbService.getLimitedNewBlocks(5);
 
-		System.out.println("Current last block height before filter: " + lastBlockHeight);
+		System.out.println("Last block received by client: " + lastBlockHeight);
 		List<Block> filteredBlocks = returnBlocks.stream().filter(block -> block.getHeight() > lastBlockHeight)
 				.collect(Collectors.toList());
 
@@ -68,7 +68,7 @@ public class SocketController {
 
 		List<Transaction> returnTx = dbService.getLimitedNewTx(10);
 
-		System.out.println("Current last tx serial before filter: " + lastTxSerialId);
+		System.out.println("Last TX received by client: " + lastTxSerialId);
 		List<Transaction> filteredTx = returnTx.stream().filter(tx -> tx.getSerialid() > lastTxSerialId)
 				.collect(Collectors.toList());
 

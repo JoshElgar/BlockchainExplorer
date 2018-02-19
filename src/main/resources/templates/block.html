@@ -26,9 +26,6 @@
     <link rel="stylesheet" href="../static/css/styles.css" th:href="@{/css/styles.css}">
     </link>
 
-    <!--  User JS -->
-    <script src="/js/scripts.js"></script>
-
 </head>
 
 <body>
@@ -37,10 +34,10 @@
         <nav class="navbar top-bar">
             <a class="navbar-brand" href="http://localhost:8080/home" th:text="'Block #' + __${block.height}__">Block</a>
         </nav>
-        <div class="home-page">
-            <div class="blockCard">
+        <div class="whole-page">
+            <div class="card">
 
-                <table class="table table-responsive blockCardTable">
+                <table class="table table-responsive card-table">
                     <tbody>
                         <!--
                         <tr th:each="var : ${#vars}">

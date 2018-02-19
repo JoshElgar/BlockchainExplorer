@@ -6,8 +6,8 @@ html {
 
 html,body {
     height: 100%;
-    margin: 0px;
-    padding: 0px;
+    margin: 0;
+    padding: 0;
 }
 
 body {
@@ -24,16 +24,9 @@ DB TESTING PORTAL
 
 .portalButton {
     text-align: center;
-    padding-top: 1.5rem;
+    padding-top: 10vh;
     display: inline-block;
 }
-
-.blockListContainer {
-    margin-top: 2rem;
-    padding: 0rem;
-}
-
-/*Block.html*/
 
 /*
 NAVBAR
@@ -41,28 +34,31 @@ NAVBAR
 .navbar {
     background: rgba(53,53,53, 1);
     padding: 0;
-    border-bottom: .15rem solid rgba(154,160,168, .5);
+    border-bottom: .5vh solid rgba(154,160,168, .5);
 }
 
 .navbar-brand {
-    margin-left: 10rem;
+    margin-left: 20vw;
     font-size: 24px;
 }
 
 a.navbar-brand {
     color: white;
+    max-width: 30vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .full-page {
-    padding: 0rem;
-    height:100%;
+    padding: 0;
+    height: 100%;
     min-height: 100%;
     overflow: auto;
     
 }
 
-.home-page {
-    padding: 0rem;
+.whole-page {
+    padding: 0;
     min-height: 100%;
     background:
       linear-gradient(217deg, rgba(209,204,220,.8), rgba(255,0,0,0) 70.71%),
@@ -72,23 +68,22 @@ a.navbar-brand {
     overflow: auto;
 }
 
-.home-page-panel {
-    margin: 0rem 10rem;;
+.page-panel {
+    margin: 5vw 5vh;
 }
 
-.blockCard {
-    margin-top: 2rem;
-    margin-left: 10rem;
-    margin-bottom: 2rem;
-    min-height: 50px;
+.card {
+    margin-top: 5vh;
+    margin-left: 25vw;
+    margin-bottom: 5vh;
     width: fit-content;
-    max-width: 50rem;
+    max-width: 80vw;
     background: white;
-    border: .15rem solid rgba(154,160,168, .5);
+    border: .3vh solid rgba(154,160,168, .5);
 }
 
-.blockCardTable {
-    margin: 0rem;
+.card-table {
+    margin: 0;
     table-layout:fixed;
 }
 .table-label {
@@ -103,5 +98,14 @@ a.navbar-brand {
     overflow: hidden;
     text-align: right;
     white-space: nowrap;
+}
+
+
+.data-widget {
+    margin: 5vw;
+    position: relative;
+    display:inline-flex;
+    height: 25vh;
+    width: 25vh;
 }
 

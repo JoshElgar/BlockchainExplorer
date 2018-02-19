@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import entities.Block;
+import entities.ChartData;
 import entities.Transaction;
 import repositories.BlockRepository;
 import repositories.TransactionRepository;
@@ -40,7 +41,7 @@ public class DbService {
 	public BlockRepository blockRepo;
 
 	@Autowired
-	TransactionRepository txRepo;
+	public TransactionRepository txRepo;
 
 	@Autowired
 	DaemonService daemonService;
@@ -74,13 +75,15 @@ public class DbService {
 
 					System.out.println("SYNC ::: Saving block with hash:" + generatedBlock.getHash());
 					blockRepo.save(generatedBlock);
-
-					String blockHash = generatedBlock.getHash();
+					List<Transaction> txs = new ArrayList<Transaction>();
 					for (Transaction t : generatedBlock.getTransactions()) {
-						t.setBlockHash(blockHash);
+						t = daemonService.getTxByTxid(t.getTxid());
+						if (t != null) {
+							txs.add(t);
+						}
 					}
+					upsertTxs(txs);
 
-					upsertTxs(generatedBlock.getTransactions());
 				}
 
 				blockToGet = generatedBlock.getPrevBlockHash();
@@ -92,6 +95,14 @@ public class DbService {
 			System.out.println("SYNC ::: Blocks in repo: " + blockRepo.count());
 
 		}
+	}
+
+	public ChartData getChartData() {
+
+		int numBlocks = 0;
+		int numTx = 0;
+
+		return new ChartData(10, 1000);
 	}
 
 	public List<Block> getLimitedNewBlocks(int limit) {
@@ -115,7 +126,8 @@ public class DbService {
 				int numTx = getNumTxForBlockHash(hash);
 
 				blocks.add(new Block(hash, height, numTx, time));
-				System.out.println("Potential block added: " + height + " " + numTx + " " + time);
+				// System.out.println("Potential block added: " + height + " " + numTx + " " +
+				// time);
 
 			}
 		} catch (SQLException e) {
@@ -152,7 +164,7 @@ public class DbService {
 				int id = rs.getInt("serialid");
 
 				txs.add(new Transaction(hash, id));
-				System.out.println("Potential tx added: " + hash + " " + id);
+				// System.out.println("Potential tx added: " + hash + " " + id);
 
 			}
 		} catch (SQLException e) {
@@ -172,13 +184,13 @@ public class DbService {
 
 	public void upsertTxs(List<Transaction> Txs) {
 
-		String sql = "INSERT INTO transaction (blockhash, bytesize, hash, txid, version) VALUES";
+		String sql = "INSERT INTO transaction (blockhash, bytesize, hash, txid, version, confirmations, time) VALUES";
 
 		// Txs = Txs.subList(0, 3);
 
 		for (Transaction t : Txs) {
-			sql = sql.concat(" ('" + t.getBlockHash() + "', " + t.getBytesize() + ", '" + t.getHash() + "', '"
-					+ t.getTxid() + "', " + t.getVersion() + "),");
+			sql = sql.concat(" ('" + t.getBlockHash() + "', " + t.getByteSize() + ", '" + t.getHash() + "', '"
+					+ t.getTxid() + "', " + t.getVersion() + ", " + t.getConfirmations() + ", " + t.getTime() + "),");
 		}
 
 		// System.out.println("\n\n\nSQL: " + sql + "\n\n\n");
@@ -192,9 +204,9 @@ public class DbService {
 		try {
 			conn = ds.getConnection();
 			PreparedStatement ps = conn.prepareStatement(sql);
-			int returnCode = ps.executeUpdate();
+			ps.executeUpdate();
 
-			System.out.println("Return code: " + returnCode);
+			// System.out.println("Return code: " + returnCode);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -209,7 +221,7 @@ public class DbService {
 	}
 
 	/*
-	 * Finds newest block in DB, uses api to find it again (updated tx) in
+	 * Finds newest block in DB, uses daemon api to find it again (updated tx) in
 	 * blockchain, saves tx updates, returns top 10 tx based on custom serial id
 	 */
 	public void updateLastBlock() {
@@ -231,7 +243,8 @@ public class DbService {
 				ObjectMapper mapper = new ObjectMapper();
 				Block generatedBlock = mapper.readValue(blockInfo, Block.class);
 
-				System.out.println("block num txs: " + generatedBlock.getTransactions().size());
+				// System.out.println("block num txs: " +
+				// generatedBlock.getTransactions().size());
 
 				// blockRepo.save(generatedBlock);
 

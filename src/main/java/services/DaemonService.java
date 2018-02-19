@@ -9,15 +9,15 @@ import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import entities.Block;
+import entities.Transaction;
 
-@EnableScheduling
 @Service
 public class DaemonService {
 
@@ -69,6 +69,30 @@ public class DaemonService {
 		}
 
 		return block;
+
+	}
+
+	public Transaction getTxByTxid(String Txid) {
+
+		Transaction tx = null;
+
+		try {
+
+			CloseableHttpResponse txResponse;
+			CloseableHttpClient httpclient = HttpClients.createDefault();
+
+			// get next block
+			HttpGet httpgetTx = new HttpGet("http://localhost:8332/rest/tx/" + Txid + ".json");
+			txResponse = httpclient.execute(httpgetTx);
+			String txInfo = EntityUtils.toString(txResponse.getEntity());
+			tx = new ObjectMapper().readValue(txInfo, Transaction.class);
+		} catch (JsonParseException e) {
+			System.out.println("Invalid transaction, could not be retrieved.");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return tx;
 
 	}
 

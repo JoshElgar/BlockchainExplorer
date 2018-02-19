@@ -8,4 +8,6 @@ import entities.Transaction;
 
 public interface TransactionRepository extends CrudRepository<Transaction, String> {
 	List<Transaction> findByHash(String hash);
+
+	Transaction findFirstByHash(String transactionHash);
 }

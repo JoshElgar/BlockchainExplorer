@@ -1,6 +1,7 @@
 package entities;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +12,7 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @Entity // indicates Block is entity
 @Table(name = "transaction")
@@ -45,16 +47,28 @@ public class Transaction implements Serializable {
 	@Column(name = "version")
 	private int version;
 
+	@JsonProperty("confirmations")
+	@Column(name = "confirmations")
+	private int confirmations;
+
+	@JsonDeserialize(using = DateDeserialiser.class)
+	@JsonProperty("time")
+	@Column(name = "time")
+	private Timestamp time;
+
 	protected Transaction() {
 
 	}
 
-	public Transaction(String hash, String blockhash, String txid, int bytesize, int version) {
+	public Transaction(String hash, String blockhash, String txid, int bytesize, int version, int confirmations,
+			Timestamp time) {
 		this.hash = hash;
 		this.blockhash = blockhash;
 		this.txid = txid;
 		this.bytesize = bytesize;
 		this.version = version;
+		this.confirmations = confirmations;
+		this.time = time;
 	}
 
 	public Transaction(String hash, int serialId) {
@@ -64,56 +78,45 @@ public class Transaction implements Serializable {
 
 	@Override
 	public String toString() {
-		return String.format("@Transaction[hash=%s, blockhash=%s, txid=%s, bytesize=%d, version=%d]", hash, blockhash,
-				txid, bytesize, version);
-	}
-
-	public int getSerialid() {
-		return serialid;
-	}
-
-	public void setSerialid(int serialid) {
-		this.serialid = serialid;
-	}
-
-	public String getHash() {
-		return hash;
-	}
-
-	public void setHash(String hash) {
-		this.hash = hash;
-	}
-
-	public String getBlockHash() {
-		return blockhash;
+		return String.format(
+				"@Transaction[hash=%s, blockhash=%s, txid=%s, bytesize=%d, version=%d, confirmations=%d, time=%s]",
+				hash, blockhash, txid, bytesize, version, confirmations, time.toString());
 	}
 
 	public void setBlockHash(String blockhash) {
 		this.blockhash = blockhash;
 	}
 
+	public int getSerialid() {
+		return serialid;
+	}
+
+	public String getHash() {
+		return hash;
+	}
+
+	public String getBlockHash() {
+		return blockhash;
+	}
+
 	public String getTxid() {
 		return txid;
 	}
 
-	public void setTxid(String txid) {
-		this.txid = txid;
-	}
-
-	public int getBytesize() {
+	public int getByteSize() {
 		return bytesize;
-	}
-
-	public void setBytesize(int bytesize) {
-		this.bytesize = bytesize;
 	}
 
 	public int getVersion() {
 		return version;
 	}
 
-	public void setVersion(int version) {
-		this.version = version;
+	public int getConfirmations() {
+		return confirmations;
+	}
+
+	public Timestamp getTime() {
+		return time;
 	}
 
 	public static long getSerialversionuid() {

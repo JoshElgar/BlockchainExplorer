@@ -38,7 +38,7 @@ public class Block implements Serializable {
 	@Column(name = "confirmations")
 	private int confirmations;
 
-	@JsonDeserialize(using = BlockDateDeserialiser.class)
+	@JsonDeserialize(using = DateDeserialiser.class)
 	@JsonProperty("time")
 	@Column(name = "time")
 	private Timestamp time;

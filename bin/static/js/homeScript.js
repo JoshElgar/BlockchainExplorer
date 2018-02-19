@@ -1,4 +1,10 @@
 $(document).ready(function () {
+    
+    lastTxSerial = 0;
+    updateLastTxSerial();
+    lastBlockHeight = 0;
+    updateLastBlockHeight();
+    
     connect();
 });
 
@@ -27,7 +33,6 @@ function connect() {
         });
     }, error_callback);
 }
-                        
 
 function disconnect() {
     if (stompClient != null) {

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import entities.Block;
+import entities.Transaction;
 import services.DaemonService;
 import services.DbService;
 
@@ -28,8 +29,15 @@ public class WebController {
 		return "home";
 	}
 
+	@RequestMapping(value = "/data")
+	public String data(Model m) {
+		System.out.println("Serving data.html");
+
+		return "data";
+	}
+
 	@RequestMapping(value = "/block/{blockHash}")
-	public String servePage(@PathVariable("blockHash") String blockHash, Model m) {
+	public String serveBlockPage(@PathVariable("blockHash") String blockHash, Model m) {
 		System.out.println("Serving block.html");
 
 		Map<String, Object> attribs = new HashMap<String, Object>();
@@ -56,6 +64,27 @@ public class WebController {
 		m.addAllAttributes(attribs);
 
 		return "block";
+
+	}
+
+	@RequestMapping(value = "/tx/{txHash}")
+	public String serveTxPage(@PathVariable("txHash") String txHash, Model m) {
+		System.out.println("Serving tx.html");
+
+		Map<String, Object> attribs = new HashMap<String, Object>();
+
+		switch (txHash) {
+		case "test":
+			txHash = "00000000000000000024fb37364cbf81fd49cc2d51c09c75c35433c3a1945d04";
+		}
+
+		// try and retrieve block from DB, fallback to querying daemon
+		// Transaction tx = dbService.txRepo.findFirstByHash(txHash);
+		Transaction tx = daemonService.getTxByTxid(txHash);
+		attribs.put("tx", tx);
+		m.addAllAttributes(attribs);
+
+		return "tx";
 
 	}
 
