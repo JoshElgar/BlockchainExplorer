@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.sql.DataSource;
 
@@ -24,9 +25,13 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import entities.BarChart;
 import entities.Block;
 import entities.ChartData;
+import entities.TimeChart;
 import entities.Transaction;
+import entities.TxVin;
+import entities.TxVout;
 import repositories.BlockRepository;
 import repositories.TransactionRepository;
 
@@ -46,7 +51,7 @@ public class DbService {
 	@Autowired
 	DaemonService daemonService;
 
-	@Scheduled(fixedDelay = 20000)
+	@Scheduled(fixedDelay = 30000)
 	public void sync() {
 
 		System.out.println("SYNC ::: Syncing database with blockchain.");
@@ -75,14 +80,19 @@ public class DbService {
 
 					System.out.println("SYNC ::: Saving block with hash:" + generatedBlock.getHash());
 					blockRepo.save(generatedBlock);
-					List<Transaction> txs = new ArrayList<Transaction>();
+					String blockHash = generatedBlock.getHash();
+
 					for (Transaction t : generatedBlock.getTransactions()) {
-						t = daemonService.getTxByTxid(t.getTxid());
-						if (t != null) {
-							txs.add(t);
+						t.setBlockHash(blockHash);
+						for (TxVin txVin : t.txVin) {
+							txVin.setTxHash(t.getHash());
+						}
+						for (TxVout txVout : t.txVout) {
+							txVout.setTxHash(t.getHash());
 						}
 					}
-					upsertTxs(txs);
+					upsertTxs(generatedBlock.getTransactions());
+					upsertTxVinVout(generatedBlock.getTransactions());
 
 				}
 
@@ -97,12 +107,47 @@ public class DbService {
 		}
 	}
 
-	public ChartData getChartData() {
+	public List<ChartData> getChartData() {
+		List<ChartData> chartData = new ArrayList<ChartData>();
 
-		int numBlocks = 0;
-		int numTx = 0;
+		chartData.add(new BarChart(5, 10));
 
-		return new ChartData(10, 1000);
+		List<String> blockHashes = new ArrayList<String>();
+		List<Integer> txCounts = new ArrayList<Integer>();
+		List<Timestamp> blockTimes = new ArrayList<Timestamp>();
+
+		String sql = "SELECT t.blockhash, COUNT(t.blockhash), b.time " + "FROM transaction AS t "
+				+ "LEFT JOIN block AS b ON b.hash=t.blockhash " + "GROUP BY t.blockhash, b.time ORDER BY b.time;";
+
+		Connection conn = null;
+
+		try {
+			conn = ds.getConnection();
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next()) {
+
+				blockHashes.add(rs.getString("blockhash"));
+				txCounts.add(rs.getInt("count"));
+				blockTimes.add(rs.getTimestamp("time"));
+
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		chartData.add(new TimeChart(blockHashes, txCounts, blockTimes));
+
+		return chartData;
 	}
 
 	public List<Block> getLimitedNewBlocks(int limit) {
@@ -184,16 +229,12 @@ public class DbService {
 
 	public void upsertTxs(List<Transaction> Txs) {
 
-		String sql = "INSERT INTO transaction (blockhash, bytesize, hash, txid, version, confirmations, time) VALUES";
-
-		// Txs = Txs.subList(0, 3);
+		String sql = "INSERT INTO transaction (blockhash, bytesize, hash, txid, version) VALUES";
 
 		for (Transaction t : Txs) {
 			sql = sql.concat(" ('" + t.getBlockHash() + "', " + t.getByteSize() + ", '" + t.getHash() + "', '"
-					+ t.getTxid() + "', " + t.getVersion() + ", " + t.getConfirmations() + ", " + t.getTime() + "),");
+					+ t.getTxid() + "', " + t.getVersion() + "),");
 		}
-
-		// System.out.println("\n\n\nSQL: " + sql + "\n\n\n");
 
 		sql = sql.substring(0, sql.length() - 1); // remove trailing comma
 
@@ -205,6 +246,83 @@ public class DbService {
 			conn = ds.getConnection();
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.executeUpdate();
+
+			// System.out.println("Return code: " + returnCode);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	public void upsertTxVinVout(List<Transaction> Txs) {
+
+		Txs = Txs.subList(0, 3);
+		String coinbaseVinSql = "INSERT INTO txvin (txhash, coinbase, vinsequence) VALUES";
+		String regularVinSql = "INSERT INTO txvin (txhash, txid, vout, vinsequence) VALUES";
+		String regularVoutSql = "INSERT INTO txvout (txhash, value) VALUES";
+
+		int coinbaseVinsCount = 0;
+		int regularVinsCount = 0;
+		int regularVoutsCount = 0;
+
+		for (Transaction t : Txs) {
+
+			List<TxVin> coinbaseVins = t.txVin.stream().filter(txVin -> txVin.isCoinbase())
+					.collect(Collectors.toList());
+
+			List<TxVin> regularVins = t.txVin.stream().filter(txVin -> !txVin.isCoinbase())
+					.collect(Collectors.toList());
+
+			coinbaseVinsCount += coinbaseVins.size();
+			regularVinsCount += regularVins.size();
+			regularVoutsCount += t.txVout.size();
+
+			for (TxVin txVin : coinbaseVins) {
+				coinbaseVinSql = coinbaseVinSql
+						.concat(" ('" + txVin.txhash + "', '" + txVin.coinbase + "', " + txVin.vinsequence + "),");
+			}
+
+			for (TxVin txVin : regularVins) {
+				regularVinSql = regularVinSql.concat(" ('" + txVin.getTxHash() + "', '" + txVin.txid + "', "
+						+ txVin.vout + ", " + txVin.getSequence() + "),");
+			}
+
+			for (TxVout txVout : t.txVout) {
+				regularVoutSql = regularVoutSql.concat(" ('" + txVout.getTxHash() + "', " + txVout.getValue() + "),");
+			}
+
+		}
+
+		System.out.println("DBSERVICE : UPSERTTXVINVOUT : NUM OF VINS/VOUTS: " + coinbaseVinsCount + " "
+				+ regularVinsCount + " " + regularVoutsCount);
+
+		coinbaseVinSql = coinbaseVinSql.substring(0, coinbaseVinSql.length() - 1); // remove trailing comma
+		regularVinSql = regularVinSql.substring(0, regularVinSql.length() - 1); // remove trailing comma
+		regularVoutSql = regularVoutSql.substring(0, regularVoutSql.length() - 1); // remove trailing comma
+
+		Connection conn = null;
+
+		try {
+			conn = ds.getConnection();
+			if (coinbaseVinsCount > 0) {
+				PreparedStatement coinbaseVinPs = conn.prepareStatement(coinbaseVinSql);
+				coinbaseVinPs.executeUpdate();
+			}
+			if (regularVinsCount > 0) {
+				PreparedStatement regularVinPs = conn.prepareStatement(regularVinSql);
+				regularVinPs.executeUpdate();
+			}
+			if (regularVoutsCount > 0) {
+				PreparedStatement regularVoutPs = conn.prepareStatement(regularVoutSql);
+				regularVoutPs.executeUpdate();
+			}
 
 			// System.out.println("Return code: " + returnCode);
 		} catch (SQLException e) {

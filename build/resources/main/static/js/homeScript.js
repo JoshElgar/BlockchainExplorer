@@ -1,31 +1,16 @@
 $(document).ready(function () {
-
-
-    $(".portalControls").find(".syncButton").click(triggerSync);
-    //connect();
+    
+    lastTxSerial = 0;
+    lastBlockHeight = 0;
+        
+    connect();
     
 });
-
-function triggerSync(e) {
-    e.preventDefault();
-    $.ajax({
-        type: "GET",
-        url: "http://localhost:8080/testportal/sync",
-        dataType: "text",
-        success: writeToConsole,
-        error: writeToConsole
-    });
-}
-
-function writeToConsole(consoleText) {
-    $(".portalConsole").text(consoleText);
-}
 
 
 /*
     Browser STOMP client (with SockJS)
 */
-
 var stompClient = null;
 
 var error_callback = function(error) {
@@ -39,6 +24,10 @@ function connect() {
     stompClient.connect({}, function (frame) {
         //setConnected(true);
         console.log('Connected: \n' + frame);
+        
+        updateLastTxSerial();
+        updateLastBlockHeight();
+        
         stompClient.subscribe('/topic/blocks', function (block) {
             processBlockMessage(JSON.parse(block.body));
         });
@@ -47,7 +36,6 @@ function connect() {
         });
     }, error_callback);
 }
-                        
 
 function disconnect() {
     if (stompClient != null) {
@@ -98,7 +86,7 @@ function processTxMessage(message) {
         txList.unshift(tx);
     });
     
-    lastTxSerial = txList[txList.length - 1].serialId;
+    lastTxSerial = txList[txList.length - 1].serialid;
     updateLastTxSerial();
     
     updateLiveTx();
@@ -118,7 +106,9 @@ function updateLiveBlocks() {
 	var highestBlocks = blockList.slice(0, 5);
 	
 	highestBlocks.forEach(function(block) {
-		var blockRow = "<tr><td>" + block.height + "</td><td>" + block.numTx + "</td><td>" + block.time + "</td></tr>";
+        var blockDate = new Date(block.time).toUTCString();
+        var link = "http://localhost:8080/block/" + block.hash;
+		var blockRow = "<tr><td><a href='" + link + "'>" + block.height + "</td><td>" + block.numTx + "</td><td>" + blockDate + "</td></tr>";
         liveBlockTable.first("tbody").prepend(blockRow);
     });
     
@@ -137,7 +127,8 @@ function updateLiveTx() {
     var highestTxs = txList.slice(0, 10);
     
     highestTxs.forEach(function(tx) {
-        var txRow = "<tr><td>" + tx.hash + "</td></tr>";
+        var link = "http://localhost:8080/tx/" + tx.hash;
+        var txRow = "<tr><td><a href='" + link + "'>" + tx.hash + "</a></td></tr>";
         liveTxTable.first("tbody").prepend(txRow);
     });
     

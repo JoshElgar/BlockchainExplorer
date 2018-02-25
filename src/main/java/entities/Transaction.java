@@ -1,7 +1,7 @@
 package entities;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,12 +9,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-@Entity // indicates Block is entity
+@Entity
 @Table(name = "transaction")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Transaction implements Serializable {
@@ -47,28 +48,29 @@ public class Transaction implements Serializable {
 	@Column(name = "version")
 	private int version;
 
-	@JsonProperty("confirmations")
-	@Column(name = "confirmations")
-	private int confirmations;
+	@Transient
+	@JsonProperty("vin")
+	@JsonDeserialize(using = vinDeserialiser.class)
+	public List<TxVin> txVin;
 
-	@JsonDeserialize(using = DateDeserialiser.class)
-	@JsonProperty("time")
-	@Column(name = "time")
-	private Timestamp time;
+	@Transient
+	@JsonProperty("vout")
+	@JsonDeserialize(using = voutDeserialiser.class)
+	public List<TxVout> txVout;
 
 	protected Transaction() {
 
 	}
 
-	public Transaction(String hash, String blockhash, String txid, int bytesize, int version, int confirmations,
-			Timestamp time) {
+	public Transaction(String hash, String blockhash, String txid, int bytesize, int version, List<TxVin> txVin,
+			List<TxVout> txVout) {
 		this.hash = hash;
 		this.blockhash = blockhash;
 		this.txid = txid;
 		this.bytesize = bytesize;
 		this.version = version;
-		this.confirmations = confirmations;
-		this.time = time;
+		this.txVin = txVin;
+		this.txVout = txVout;
 	}
 
 	public Transaction(String hash, int serialId) {
@@ -78,9 +80,8 @@ public class Transaction implements Serializable {
 
 	@Override
 	public String toString() {
-		return String.format(
-				"@Transaction[hash=%s, blockhash=%s, txid=%s, bytesize=%d, version=%d, confirmations=%d, time=%s]",
-				hash, blockhash, txid, bytesize, version, confirmations, time.toString());
+		return String.format("@Transaction[hash=%s, blockhash=%s, txid=%s, bytesize=%d, version=%d]", hash, blockhash,
+				txid, bytesize, version);
 	}
 
 	public void setBlockHash(String blockhash) {
@@ -109,14 +110,6 @@ public class Transaction implements Serializable {
 
 	public int getVersion() {
 		return version;
-	}
-
-	public int getConfirmations() {
-		return confirmations;
-	}
-
-	public Timestamp getTime() {
-		return time;
 	}
 
 	public static long getSerialversionuid() {

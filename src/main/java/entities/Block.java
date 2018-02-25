@@ -15,7 +15,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-@Entity // indicates Block is entity
+@Entity
 @Table(name = "block")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Block implements Serializable {

@@ -1,0 +1,111 @@
+@font-face { font-family: "Gotham Rounded Bold"; src: url('../static/fonts/Gotham Rounded Bold.otf'); }
+
+html {
+    font-size: 20px;
+}
+
+html,body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "Gotham Rounded Bold", sans-serif;
+}
+
+/*
+DB TESTING PORTAL
+*/
+
+.portalControls {
+    display: inline-table;
+}
+
+.portalButton {
+    text-align: center;
+    padding-top: 10vh;
+    display: inline-block;
+}
+
+/*
+NAVBAR
+*/
+.navbar {
+    background: rgba(53,53,53, 1);
+    padding: 0;
+    border-bottom: .5vh solid rgba(154,160,168, .5);
+}
+
+.navbar-brand {
+    margin-left: 20vw;
+    font-size: 24px;
+}
+
+a.navbar-brand {
+    color: white;
+    max-width: 30vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.full-page {
+    padding: 0;
+    height: 100%;
+    min-height: 100%;
+    overflow: auto;
+    
+}
+
+.whole-page {
+    padding: 0;
+    min-height: 100%;
+    background:
+      linear-gradient(217deg, rgba(209,204,220,.8), rgba(255,0,0,0) 70.71%),
+      linear-gradient(127deg, rgba(142,177,199,.8), rgba(0,255,0,0) 70.71%),
+      linear-gradient(336deg, rgba(154,160,168,.8), rgba(0,0,255,0) 70.71%),
+        linear-gradient(37deg, rgba(154,160,168,.8), rgba(0,0,255,0) 70.71%);
+    overflow: auto;
+}
+
+.page-panel {
+    margin: 5vw 5vh;
+}
+
+.card {
+    margin-top: 5vh;
+    margin-left: 25vw;
+    margin-bottom: 5vh;
+    width: fit-content;
+    max-width: 80vw;
+    background: white;
+    border: .3vh solid rgba(154,160,168, .5);
+}
+
+.card-table {
+    margin: 0;
+    table-layout:fixed;
+}
+.table-label {
+    opacity: .8;
+    
+}
+.table-value {
+    line-height: 1.5rem;
+    font-size: 12px;
+    text-align: center;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    text-align: right;
+    white-space: nowrap;
+}
+
+
+.data-widget {
+    margin: 5vw;
+    position: relative;
+    display:inline-flex;
+    height: 25vh;
+    width: 25vh;
+}
+

@@ -1,11 +1,10 @@
 $(document).ready(function () {
     
     lastTxSerial = 0;
-    updateLastTxSerial();
     lastBlockHeight = 0;
-    updateLastBlockHeight();
-    
+        
     connect();
+    
 });
 
 
@@ -25,6 +24,10 @@ function connect() {
     stompClient.connect({}, function (frame) {
         //setConnected(true);
         console.log('Connected: \n' + frame);
+        
+        updateLastTxSerial();
+        updateLastBlockHeight();
+        
         stompClient.subscribe('/topic/blocks', function (block) {
             processBlockMessage(JSON.parse(block.body));
         });
@@ -124,7 +127,7 @@ function updateLiveTx() {
     var highestTxs = txList.slice(0, 10);
     
     highestTxs.forEach(function(tx) {
-        var link = "http://localhost:8080/transaction/" + tx.hash;
+        var link = "http://localhost:8080/tx/" + tx.hash;
         var txRow = "<tr><td><a href='" + link + "'>" + tx.hash + "</a></td></tr>";
         liveTxTable.first("tbody").prepend(txRow);
     });

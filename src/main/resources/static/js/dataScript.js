@@ -2,21 +2,56 @@ $(document).ready(function () {
     
     $.ajax("http://localhost:8080/data/getchartdata", {
         success: function(data) {
-            var chartData = [];
-            chartData.push(data.numTx);
-            chartData.push(data.numBlocks);
-            createChart(chartData);
+            createBarChart(data);
+            createTimeChart(data);
         },
         error: function(result) {
-            //console.log(result);
-            createChart(new Array(5, 6));
+            console.log(result)
         }
     });
 
 });
 
+function createTimeChart(data) {
+    
+    
+    var ctx = $("#chart2");
+    var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: data[1].blockTime,
+            datasets: [{
+                label: 'Transactions',
+                data: data[1].txCount,
+                backgroundColor: '#fe8b36',
+                borderColor: '#fe8b36',
+            }]
+        },
+        options: {
+            scales: {
+                xAxes: [{
+                    type: 'time',
+                    display: true,
+                    distribution: 'series',
+                    time: {
+                        unit: 'minute'
+                    }
+                }],
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            },
+            maintainAspectRatio: false
+        }
+    });
+}
 
-function createChart(chartData) {
+
+function createBarChart(data) {
+    
+    
     var ctx = $("#chart1");
     var myChart = new Chart(ctx, {
         type: 'bar',
@@ -24,7 +59,7 @@ function createChart(chartData) {
             labels: ["Blocks", "Txs"],
             datasets: [{
                 label: 'Total number',
-                data: chartData,
+                data: [data[0].numTx, data[0].numBlocks],
                 backgroundColor: [
                                         'rgba(255, 99, 132, 0.2)',
                                         'rgba(54, 162, 235, 0.2)',

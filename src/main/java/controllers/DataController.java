@@ -1,5 +1,7 @@
 package controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,7 +16,7 @@ public class DataController {
 	public DbService dbService;
 
 	@RequestMapping(value = "/data/getchartdata")
-	public ChartData getChartData() {
+	public List<ChartData> getChartData() {
 		System.out.println("DataController ::: Getting chart data.");
 
 		return dbService.getChartData();

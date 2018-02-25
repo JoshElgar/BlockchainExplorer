@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
 public class DateDeserialiser extends StdDeserializer<Timestamp> {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 189350860793782692L;
 
 	public DateDeserialiser() {
 		this(null);

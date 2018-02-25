@@ -13,16 +13,19 @@ $(document).ready(function () {
 });
 
 function createTimeChart(data) {
+    var chartData = [5, 6, 7, 8, 9, 10];
+    //chartData.push(data[1].numTx);
+    //chartData.push(data[1].numBlocks);
     
     
     var ctx = $("#chart2");
     var myChart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: data[1].blockTime,
+            labels: [new Date(2018, 01, 20), new Date(2018, 02, 20), new Date(2018, 03, 20), new Date(2018, 04, 20), new Date(2018, 05, 20), new Date(2018, 06, 20)],
             datasets: [{
                 label: 'Transactions',
-                data: data[1].txCount,
+                data: chartData,
                 backgroundColor: '#fe8b36',
                 borderColor: '#fe8b36',
             }]
@@ -32,10 +35,6 @@ function createTimeChart(data) {
                 xAxes: [{
                     type: 'time',
                     display: true,
-                    distribution: 'series',
-                    time: {
-                        unit: 'minute'
-                    }
                 }],
                 yAxes: [{
                     ticks: {
@@ -50,6 +49,9 @@ function createTimeChart(data) {
 
 
 function createBarChart(data) {
+    var chartData = [];
+    chartData.push(data[0].numTx);
+    chartData.push(data[0].numBlocks);
     
     
     var ctx = $("#chart1");
@@ -59,7 +61,7 @@ function createBarChart(data) {
             labels: ["Blocks", "Txs"],
             datasets: [{
                 label: 'Total number',
-                data: [data[0].numTx, data[0].numBlocks],
+                data: chartData,
                 backgroundColor: [
                                         'rgba(255, 99, 132, 0.2)',
                                         'rgba(54, 162, 235, 0.2)',

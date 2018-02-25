@@ -4,12 +4,13 @@
 <html>
 
 <head>
-    <title>Test Portal</title>
+    <title>Home</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
     </link>
+
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 
@@ -20,39 +21,27 @@
     <!-- StompJS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-    
+
     <!-- User CSS -->
     <link rel="stylesheet" href="../static/css/styles.css" th:href="@{/css/styles.css}">
     </link>
 
     <!--  User JS -->
-    <script src="/js/scripts.js"></script>
+    <script src="/js/homeScript.js"></script>
 
 </head>
 
-
 <body>
-    <div class="container-fluid">
-        <div class="row">
+    <div class="container-fluid full-page">
 
-            <div class="col-md-12 portalHead alert alert-success">DB Testing Portal</div>
-        </div>
-        <div class="row">
-            <div class="portalControls col">
-                <div class="portalButton col-sm-12 col-md-4">
-                    <button type="button" class="btn btn-success col syncButton">SYNC</button>
-                </div>
-                <div class="portalButton col-sm-12 col-md-4">
-                    <button type="button" class="btn btn-success col">SAVE2</button>
-                </div>
-                <div class="portalButton col-sm-12 col-md-4">
-                    <button type="button" class="btn btn-success col">SAVE3</button>
-                </div>
-            </div>
-        </div>
-        <div class="row">
+        <nav class="navbar top-bar">
+            <a class="navbar-brand" href="http://localhost:8080/home">Home</a>
+        </nav>
+        <div class="whole-page">
+            
+            <div class="row page-panel">
             <div id="blockListContainer" class="blockListContainer col">
-                <table id="liveBlockTable" class="table table-bordered table-hover table-sm">
+                <table id="liveBlockTable" class="table table-inverse table-bordered table-hover table-sm">
                     <thead class="thead-inverse">
                         <tr>
                             <th>Height</th>
@@ -69,7 +58,7 @@
                 <table id="liveTxTable" class="table table-bordered table-hover table-sm">
                     <thead class="thead-inverse">
                         <tr>
-                            <th>Hash</th>
+                            <th>Newest Transactions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -79,8 +68,11 @@
                 </table>
             </div>
         </div>
-    </div>
+            
+            
+        </div>
 
+    </div>
 </body>
 
 </html>
