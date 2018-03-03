@@ -34,6 +34,7 @@
         <nav class="navbar top-bar">
             <a class="navbar-brand" href="http://localhost:8080/home" th:text="'Transaction #' + __${tx.hash}__">Tx</a>
         </nav>
+        <div class="whole-page">
             <div class="card">
 
                 <table class="table table-responsive card-table">
@@ -55,14 +56,6 @@
                             <td id="version-value" class="table-value">
                                 <a th:text="${tx.blockHash}?: 'null'" th:href="@{http://localhost:8080/block/{blockHash}(blockHash=${tx.blockHash})}"></a>
                                 
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="table-label">
-                                Time
-                            </td>
-                            <td id="time-value" class="table-value" th:text="${tx.time}?: 'null'">
-
                             </td>
                         </tr>
                         <tr>

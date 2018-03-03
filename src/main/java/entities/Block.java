@@ -2,21 +2,20 @@ package entities;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.Embedded;
 import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-@Entity
-@Table(name = "block")
+@Document(collection = "blocks")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Block implements Serializable {
 
@@ -26,7 +25,6 @@ public class Block implements Serializable {
 	private String hash;
 
 	@JsonProperty("height")
-	@Column(name = "height") // mapped column name in table
 	private int height;
 
 	@Transient
@@ -35,47 +33,37 @@ public class Block implements Serializable {
 	private int numTx;
 
 	@JsonProperty("confirmations")
-	@Column(name = "confirmations")
 	private int confirmations;
 
-	@JsonDeserialize(using = DateDeserialiser.class)
+	// @JsonDeserialize(using = DateDeserialiser.class)
 	@JsonProperty("time")
-	@Column(name = "time")
-	private Timestamp time;
+	private Date time;
 
 	@JsonProperty("strippedsize")
-	@Column(name = "bytesize")
 	private int bytesize;
 
 	@JsonProperty("version")
-	@Column(name = "blockversion")
 	private int blockversion;
 
 	@JsonProperty("nonce")
-	@Column(name = "nonce")
 	private long nonce;
 
 	@JsonProperty("merkleroot")
-	@Column(name = "merkleroot")
 	private String merkleroot;
 
 	@JsonProperty("previousblockhash")
-	@Column(name = "prevblockhash")
 	private String prevblockhash;
 
 	@JsonProperty("nextblockhash")
-	@Column(name = "nextblockhash")
 	private String nextblockhash;
 
 	@JsonProperty("bits")
-	@Column(name = "bits")
 	private String bits;
 
 	@JsonProperty("difficulty")
-	@Column(name = "difficulty")
 	private float difficulty;
 
-	@Transient
+	@Embedded
 	@JsonInclude()
 	@JsonProperty("tx")
 	private List<Transaction> transactions;
@@ -142,7 +130,7 @@ public class Block implements Serializable {
 		return this.confirmations;
 	}
 
-	public Timestamp getTime() {
+	public Date getTime() {
 		return this.time;
 	}
 

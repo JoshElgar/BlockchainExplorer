@@ -8,7 +8,6 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 
 import entities.Block;
@@ -40,7 +39,7 @@ public class SocketController {
 		System.out.println("New tx serial: " + lastTxSerialId);
 	}
 
-	@Scheduled(fixedDelay = 10000)
+	// @Scheduled(fixedDelay = 10000)
 	public void streamLastBlocks() {
 
 		System.out.println("\nStreaming last blocks:");
@@ -59,7 +58,7 @@ public class SocketController {
 
 	}
 
-	@Scheduled(fixedDelay = 10000)
+	// @Scheduled(fixedDelay = 10000)
 	public void streamLastTxs() {
 
 		System.out.println("\nStreaming new txs.");
@@ -67,16 +66,7 @@ public class SocketController {
 		dbService.updateLastBlock();
 
 		List<Transaction> returnTx = dbService.getLimitedNewTx(10);
-
-		System.out.println("Last TX received by client: " + lastTxSerialId);
-		List<Transaction> filteredTx = returnTx.stream().filter(tx -> tx.getSerialid() > lastTxSerialId)
-				.collect(Collectors.toList());
-
-		if (filteredTx.isEmpty()) {
-			System.out.println("No new tx to stream.");
-		} else {
-			this.template.convertAndSend("/topic/tx", filteredTx);
-		}
+		this.template.convertAndSend("/topic/tx", returnTx);
 
 	}
 

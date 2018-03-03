@@ -19,6 +19,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -32,7 +33,7 @@ import entities.TimeChart;
 import entities.Transaction;
 import entities.TxVin;
 import entities.TxVout;
-import repositories.BlockRepository;
+import repositories.MongoUserRepository;
 import repositories.TransactionRepository;
 
 @EnableScheduling
@@ -43,7 +44,7 @@ public class DbService {
 	DataSource ds;
 
 	@Autowired
-	public BlockRepository blockRepo;
+	public MongoUserRepository mongoRepo;
 
 	@Autowired
 	public TransactionRepository txRepo;
@@ -51,8 +52,14 @@ public class DbService {
 	@Autowired
 	DaemonService daemonService;
 
-	@Scheduled(fixedDelay = 30000)
+	@Autowired
+	private MongoOperations mongo;
+
+	@Scheduled(fixedDelay = 10000)
 	public void sync() {
+
+		// mongo.insert(new Block("55555", 55, 100, new Timestamp(500000000)),
+		// "blocks");
 
 		System.out.println("SYNC ::: Syncing database with blockchain.");
 
@@ -64,7 +71,7 @@ public class DbService {
 		int minBlockHeight = currentBlocks - 5; // for testing
 
 		// does repo contain latest block hash
-		Block matchingBlock = blockRepo.findFirstByHash(blockToGet);
+		Block matchingBlock = mongoRepo.findFirstByHash(blockToGet);
 		boolean syncedAll = (matchingBlock == null ? false : true);
 
 		while (!syncedAll) {
@@ -79,20 +86,19 @@ public class DbService {
 				} else {
 
 					System.out.println("SYNC ::: Saving block with hash:" + generatedBlock.getHash());
-					blockRepo.save(generatedBlock);
-					String blockHash = generatedBlock.getHash();
+					// mongoRepo.save(generatedBlock);
+					mongo.save(generatedBlock);
 
-					for (Transaction t : generatedBlock.getTransactions()) {
-						t.setBlockHash(blockHash);
-						for (TxVin txVin : t.txVin) {
-							txVin.setTxHash(t.getHash());
-						}
-						for (TxVout txVout : t.txVout) {
-							txVout.setTxHash(t.getHash());
-						}
-					}
-					upsertTxs(generatedBlock.getTransactions());
-					upsertTxVinVout(generatedBlock.getTransactions());
+					/*
+					 * String blockHash = generatedBlock.getHash();
+					 * 
+					 * for (Transaction t : generatedBlock.getTransactions()) {
+					 * t.setBlockHash(blockHash); for (TxVin txVin : t.txVin) {
+					 * txVin.setTxHash(t.getHash()); } for (TxVout txVout : t.txVout) {
+					 * txVout.setTxHash(t.getHash()); } }
+					 * upsertTxs(generatedBlock.getTransactions());
+					 * upsertTxVinVout(generatedBlock.getTransactions());
+					 */
 
 				}
 
@@ -102,7 +108,7 @@ public class DbService {
 				e.printStackTrace();
 			}
 
-			System.out.println("SYNC ::: Blocks in repo: " + blockRepo.count());
+			System.out.println("SYNC ::: Blocks in repo: " + mongoRepo.count());
 
 		}
 	}
@@ -151,6 +157,8 @@ public class DbService {
 	}
 
 	public List<Block> getLimitedNewBlocks(int limit) {
+		
+		mongo.f
 
 		// top 5 blocks on height
 		String sql = "SELECT hash, height, time FROM block ORDER BY height DESC LIMIT ";
@@ -193,7 +201,7 @@ public class DbService {
 
 	public List<Transaction> getLimitedNewTx(int limit) {
 		// top 5 blocks on height
-		String sql = "SELECT serialid, hash FROM transaction ORDER BY serialid DESC LIMIT ";
+		String sql = "SELECT hash FROM transaction ORDER BY serialid DESC LIMIT ";
 		sql = sql.concat(String.valueOf(limit) + ";");
 
 		Connection conn = null;
@@ -206,9 +214,8 @@ public class DbService {
 			while (rs.next()) {
 
 				String hash = rs.getString("hash");
-				int id = rs.getInt("serialid");
 
-				txs.add(new Transaction(hash, id));
+				txs.add(new Transaction(hash));
 				// System.out.println("Potential tx added: " + hash + " " + id);
 
 			}
@@ -345,7 +352,7 @@ public class DbService {
 	public void updateLastBlock() {
 
 		// finds newest block hash in DB
-		Block block = blockRepo.findFirstByOrderByHeightDesc();
+		Block block = mongoRepo.findFirstByOrderByHeightDesc();
 		if (block == null) {
 
 		} else {

@@ -28,6 +28,10 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-thymeleaf")
     compile("org.springframework.boot:spring-boot-devtools")
     compile("org.springframework.boot:spring-boot-starter-data-jpa")
+
+	compile("org.springframework.boot:spring-boot-starter-data-mongodb")
+    
+    
     
     compile group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '8.5.23'
     compile group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '8.5.23'    

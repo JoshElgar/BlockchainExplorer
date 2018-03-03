@@ -48,7 +48,7 @@ public class WebController {
 		}
 
 		// try and retrieve block from DB, fallback to querying daemon
-		Block block = dbService.blockRepo.findFirstByHash(blockHash);
+		Block block = dbService.mongoRepo.findFirstByHash(blockHash);
 
 		if (block == null) {
 			block = daemonService.getBlockByHash(blockHash);

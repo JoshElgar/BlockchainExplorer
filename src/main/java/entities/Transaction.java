@@ -5,11 +5,8 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -23,11 +20,6 @@ public class Transaction implements Serializable {
 	private static final long serialVersionUID = -3009157732242241606L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@JsonProperty("serialid")
-	@Column(name = "serialid")
-	private int serialid;
-
 	@JsonProperty("hash")
 	@Column(name = "hash", unique = true)
 	private String hash;
@@ -48,12 +40,10 @@ public class Transaction implements Serializable {
 	@Column(name = "version")
 	private int version;
 
-	@Transient
 	@JsonProperty("vin")
 	@JsonDeserialize(using = vinDeserialiser.class)
 	public List<TxVin> txVin;
 
-	@Transient
 	@JsonProperty("vout")
 	@JsonDeserialize(using = voutDeserialiser.class)
 	public List<TxVout> txVout;
@@ -73,9 +63,8 @@ public class Transaction implements Serializable {
 		this.txVout = txVout;
 	}
 
-	public Transaction(String hash, int serialId) {
+	public Transaction(String hash) {
 		this.hash = hash;
-		this.serialid = serialId;
 	}
 
 	@Override
@@ -86,10 +75,6 @@ public class Transaction implements Serializable {
 
 	public void setBlockHash(String blockhash) {
 		this.blockhash = blockhash;
-	}
-
-	public int getSerialid() {
-		return serialid;
 	}
 
 	public String getHash() {
