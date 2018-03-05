@@ -157,8 +157,6 @@ public class DbService {
 	}
 
 	public List<Block> getLimitedNewBlocks(int limit) {
-		
-		mongo.f
 
 		// top 5 blocks on height
 		String sql = "SELECT hash, height, time FROM block ORDER BY height DESC LIMIT ";
