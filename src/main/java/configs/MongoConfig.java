@@ -18,6 +18,7 @@ public class MongoConfig extends AbstractMongoConfiguration {
 	}
 
 	public @Bean MongoClient mongoClient() {
+
 		return new MongoClient("localhost", 27017);
 	}
 
