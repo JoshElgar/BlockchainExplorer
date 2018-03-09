@@ -2,12 +2,16 @@ package repositories;
 
 import java.util.List;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
 
 import entities.Transaction;
 
-public interface TransactionRepository extends CrudRepository<Transaction, String> {
+@Repository
+public interface TransactionRepository extends MongoRepository<Transaction, String> {
 	List<Transaction> findByHash(String hash);
+
+	Transaction findFirstByTxid(String txid);
 
 	Transaction findFirstByHash(String transactionHash);
 }

@@ -32,8 +32,9 @@
     <div class="container-fluid full-page">
 
         <nav class="navbar top-bar">
-            <a class="navbar-brand" href="http://localhost:8080/home" th:text="'Transaction #' + __${tx.hash}__">Tx</a>
+            <a class="navbar-brand" href="http://localhost:8080/home" th:text="'Transaction #' + ${tx?.hash}?: 'null'">Tx</a>
         </nav>
+        <div class="whole-page">
             <div class="card">
 
                 <table class="table table-responsive card-table">
@@ -44,7 +45,7 @@
                             <td class="table-label">
                                 Hash
                             </td>
-                            <td id="hash-value" class="table-value" th:text="${tx.hash}?: 'null'">
+                            <td id="hash-value" class="table-value" th:text="${tx?.hash}?: 'null'">
 
                             </td>
                         </tr>
@@ -53,23 +54,15 @@
                                 Block Hash
                             </td>
                             <td id="version-value" class="table-value">
-                                <a th:text="${tx.blockHash}?: 'null'" th:href="@{http://localhost:8080/block/{blockHash}(blockHash=${tx.blockHash})}"></a>
+                                <a th:text="${tx?.blockHash}?: 'null'" th:href="@{http://localhost:8080/block/{blockHash}(blockHash=${tx?.blockHash})}"></a>
                                 
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="table-label">
-                                Time
-                            </td>
-                            <td id="time-value" class="table-value" th:text="${tx.time}?: 'null'">
-
                             </td>
                         </tr>
                         <tr>
                             <td class="table-label">
                                 Txid
                             </td>
-                            <td id="time-value" class="table-value" th:text="${tx.txid}?: 'null'">
+                            <td id="time-value" class="table-value" th:text="${tx?.txid}?: 'null'">
 
                             </td>
                         </tr>
@@ -77,14 +70,14 @@
                             <td class="table-label">
                                 Byte Size
                             </td>
-                            <td id="bits-value" class="table-value" th:text="${tx.ByteSize}?: 'null'">
+                            <td id="bits-value" class="table-value" th:text="${tx?.ByteSize}?: 'null'">
                             </td>
                         </tr>
                         <tr>
                             <td class="table-label">
                                 Version
                             </td>
-                            <td id="version-value" class="table-value" th:text="${tx.version}?: 'null'">
+                            <td id="version-value" class="table-value" th:text="${tx?.version}?: 'null'">
                             </td>
                         </tr>
 

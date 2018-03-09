@@ -8,7 +8,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.sql.DataSource;
 
@@ -17,8 +16,11 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -30,20 +32,20 @@ import entities.Block;
 import entities.ChartData;
 import entities.TimeChart;
 import entities.Transaction;
-import entities.TxVin;
-import entities.TxVout;
-import repositories.BlockRepository;
+import repositories.MongoUserRepository;
 import repositories.TransactionRepository;
 
 @EnableScheduling
 @Service
 public class DbService {
 
+	private static final Logger logger = LogManager.getLogger(DbService.class);
+
 	@Autowired
 	DataSource ds;
 
 	@Autowired
-	public BlockRepository blockRepo;
+	public MongoUserRepository mongoRepo;
 
 	@Autowired
 	public TransactionRepository txRepo;
@@ -51,10 +53,16 @@ public class DbService {
 	@Autowired
 	DaemonService daemonService;
 
-	@Scheduled(fixedDelay = 30000)
+	@Autowired
+	private MongoOperations mongo;
+
+	@Scheduled(fixedDelay = 10000)
 	public void sync() {
 
-		System.out.println("SYNC ::: Syncing database with blockchain.");
+		// mongo.insert(new Block("55555", 55, 100, new Timestamp(500000000)),
+		// "blocks");
+
+		logger.info("SYNC ::: Syncing database with blockchain.");
 
 		Map<String, Object> chainInfo = daemonService.getChainInfoMap();
 
@@ -64,7 +72,7 @@ public class DbService {
 		int minBlockHeight = currentBlocks - 5; // for testing
 
 		// does repo contain latest block hash
-		Block matchingBlock = blockRepo.findFirstByHash(blockToGet);
+		Block matchingBlock = mongoRepo.findFirstByHash(blockToGet);
 		boolean syncedAll = (matchingBlock == null ? false : true);
 
 		while (!syncedAll) {
@@ -73,26 +81,25 @@ public class DbService {
 				Block generatedBlock = daemonService.getBlockByHash(blockToGet);
 
 				if (generatedBlock.getHeight() < minBlockHeight) {
-					System.out.println("SYNC ::: Not one of the last 5 blocks in blockchain, finished syncing.");
+					logger.info("SYNC ::: Not one of the last 5 blocks in blockchain, finished syncing.");
 					syncedAll = true;
 
 				} else {
 
-					System.out.println("SYNC ::: Saving block with hash:" + generatedBlock.getHash());
-					blockRepo.save(generatedBlock);
-					String blockHash = generatedBlock.getHash();
+					logger.info("SYNC ::: Saving block with hash:" + generatedBlock.getHash());
+					// mongoRepo.save(generatedBlock);
+					mongo.save(generatedBlock);
 
-					for (Transaction t : generatedBlock.getTransactions()) {
-						t.setBlockHash(blockHash);
-						for (TxVin txVin : t.txVin) {
-							txVin.setTxHash(t.getHash());
-						}
-						for (TxVout txVout : t.txVout) {
-							txVout.setTxHash(t.getHash());
-						}
-					}
-					upsertTxs(generatedBlock.getTransactions());
-					upsertTxVinVout(generatedBlock.getTransactions());
+					/*
+					 * String blockHash = generatedBlock.getHash();
+					 * 
+					 * for (Transaction t : generatedBlock.getTransactions()) {
+					 * t.setBlockHash(blockHash); for (TxVin txVin : t.txVin) {
+					 * txVin.setTxHash(t.getHash()); } for (TxVout txVout : t.txVout) {
+					 * txVout.setTxHash(t.getHash()); } }
+					 * upsertTxs(generatedBlock.getTransactions());
+					 * upsertTxVinVout(generatedBlock.getTransactions());
+					 */
 
 				}
 
@@ -102,7 +109,7 @@ public class DbService {
 				e.printStackTrace();
 			}
 
-			System.out.println("SYNC ::: Blocks in repo: " + blockRepo.count());
+			logger.info("SYNC ::: Blocks in repo: " + mongoRepo.count());
 
 		}
 	}
@@ -150,192 +157,25 @@ public class DbService {
 		return chartData;
 	}
 
-	public List<Block> getLimitedNewBlocks(int limit) {
+	public List<Block> getLimitedNewBlocks() {
 
-		// top 5 blocks on height
-		String sql = "SELECT hash, height, time FROM block ORDER BY height DESC LIMIT ";
-		sql = sql.concat(String.valueOf(limit) + ";");
+		List<Block> blocks = mongoRepo.findTop5ByOrderByHeightDesc();
 
-		Connection conn = null;
-		List<Block> blocks = new ArrayList<Block>();
-		try {
-			conn = ds.getConnection();
-			PreparedStatement ps = conn.prepareStatement(sql);
-			ResultSet rs = ps.executeQuery();
-
-			while (rs.next()) {
-
-				String hash = rs.getString("hash");
-				int height = rs.getInt("height");
-				Timestamp time = rs.getTimestamp("time");
-				int numTx = getNumTxForBlockHash(hash);
-
-				blocks.add(new Block(hash, height, numTx, time));
-				// System.out.println("Potential block added: " + height + " " + numTx + " " +
-				// time);
-
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
+		for (Block b : blocks) {
+			b.setNumTx(getNumTxForBlockHash(b.getHash()));
 		}
 
 		return blocks;
 
 	}
 
-	public List<Transaction> getLimitedNewTx(int limit) {
-		// top 5 blocks on height
-		String sql = "SELECT serialid, hash FROM transaction ORDER BY serialid DESC LIMIT ";
-		sql = sql.concat(String.valueOf(limit) + ";");
+	public List<Transaction> getLimitedNewTx() {
 
-		Connection conn = null;
-		List<Transaction> txs = new ArrayList<Transaction>();
-		try {
-			conn = ds.getConnection();
-			PreparedStatement ps = conn.prepareStatement(sql);
-			ResultSet rs = ps.executeQuery();
+		Block b = mongoRepo.findFirstByOrderByHeightDesc();
 
-			while (rs.next()) {
-
-				String hash = rs.getString("hash");
-				int id = rs.getInt("serialid");
-
-				txs.add(new Transaction(hash, id));
-				// System.out.println("Potential tx added: " + hash + " " + id);
-
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		}
+		List<Transaction> txs = b.getTransactions().subList(0, 5);
 
 		return txs;
-	}
-
-	public void upsertTxs(List<Transaction> Txs) {
-
-		String sql = "INSERT INTO transaction (blockhash, bytesize, hash, txid, version) VALUES";
-
-		for (Transaction t : Txs) {
-			sql = sql.concat(" ('" + t.getBlockHash() + "', " + t.getByteSize() + ", '" + t.getHash() + "', '"
-					+ t.getTxid() + "', " + t.getVersion() + "),");
-		}
-
-		sql = sql.substring(0, sql.length() - 1); // remove trailing comma
-
-		sql = sql.concat(" ON CONFLICT (hash) DO NOTHING;");
-
-		Connection conn = null;
-
-		try {
-			conn = ds.getConnection();
-			PreparedStatement ps = conn.prepareStatement(sql);
-			ps.executeUpdate();
-
-			// System.out.println("Return code: " + returnCode);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-
-	public void upsertTxVinVout(List<Transaction> Txs) {
-
-		Txs = Txs.subList(0, 3);
-		String coinbaseVinSql = "INSERT INTO txvin (txhash, coinbase, vinsequence) VALUES";
-		String regularVinSql = "INSERT INTO txvin (txhash, txid, vout, vinsequence) VALUES";
-		String regularVoutSql = "INSERT INTO txvout (txhash, value) VALUES";
-
-		int coinbaseVinsCount = 0;
-		int regularVinsCount = 0;
-		int regularVoutsCount = 0;
-
-		for (Transaction t : Txs) {
-
-			List<TxVin> coinbaseVins = t.txVin.stream().filter(txVin -> txVin.isCoinbase())
-					.collect(Collectors.toList());
-
-			List<TxVin> regularVins = t.txVin.stream().filter(txVin -> !txVin.isCoinbase())
-					.collect(Collectors.toList());
-
-			coinbaseVinsCount += coinbaseVins.size();
-			regularVinsCount += regularVins.size();
-			regularVoutsCount += t.txVout.size();
-
-			for (TxVin txVin : coinbaseVins) {
-				coinbaseVinSql = coinbaseVinSql
-						.concat(" ('" + txVin.txhash + "', '" + txVin.coinbase + "', " + txVin.vinsequence + "),");
-			}
-
-			for (TxVin txVin : regularVins) {
-				regularVinSql = regularVinSql.concat(" ('" + txVin.getTxHash() + "', '" + txVin.txid + "', "
-						+ txVin.vout + ", " + txVin.getSequence() + "),");
-			}
-
-			for (TxVout txVout : t.txVout) {
-				regularVoutSql = regularVoutSql.concat(" ('" + txVout.getTxHash() + "', " + txVout.getValue() + "),");
-			}
-
-		}
-
-		System.out.println("DBSERVICE : UPSERTTXVINVOUT : NUM OF VINS/VOUTS: " + coinbaseVinsCount + " "
-				+ regularVinsCount + " " + regularVoutsCount);
-
-		coinbaseVinSql = coinbaseVinSql.substring(0, coinbaseVinSql.length() - 1); // remove trailing comma
-		regularVinSql = regularVinSql.substring(0, regularVinSql.length() - 1); // remove trailing comma
-		regularVoutSql = regularVoutSql.substring(0, regularVoutSql.length() - 1); // remove trailing comma
-
-		Connection conn = null;
-
-		try {
-			conn = ds.getConnection();
-			if (coinbaseVinsCount > 0) {
-				PreparedStatement coinbaseVinPs = conn.prepareStatement(coinbaseVinSql);
-				coinbaseVinPs.executeUpdate();
-			}
-			if (regularVinsCount > 0) {
-				PreparedStatement regularVinPs = conn.prepareStatement(regularVinSql);
-				regularVinPs.executeUpdate();
-			}
-			if (regularVoutsCount > 0) {
-				PreparedStatement regularVoutPs = conn.prepareStatement(regularVoutSql);
-				regularVoutPs.executeUpdate();
-			}
-
-			// System.out.println("Return code: " + returnCode);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		}
 	}
 
 	/*
@@ -345,11 +185,11 @@ public class DbService {
 	public void updateLastBlock() {
 
 		// finds newest block hash in DB
-		Block block = blockRepo.findFirstByOrderByHeightDesc();
+		Block block = mongoRepo.findFirstByOrderByHeightDesc();
 		if (block == null) {
 
 		} else {
-			System.out.println("Refreshing block hash: " + block.getHash());
+			logger.info("Refreshing block hash: " + block.getHash());
 			CloseableHttpClient httpclient = HttpClients.createDefault();
 			CloseableHttpResponse blockResponse;
 
@@ -360,22 +200,10 @@ public class DbService {
 
 				ObjectMapper mapper = new ObjectMapper();
 				Block generatedBlock = mapper.readValue(blockInfo, Block.class);
-
-				// System.out.println("block num txs: " +
-				// generatedBlock.getTransactions().size());
-
-				// blockRepo.save(generatedBlock);
-
-				String blockHash = generatedBlock.getHash();
-				for (Transaction t : generatedBlock.getTransactions()) {
-					t.setBlockHash(blockHash);
-				}
-
-				// txRepo.save(generatedBlock.getTransactions());
-				upsertTxs(generatedBlock.getTransactions());
+				mongoRepo.save(generatedBlock);
 
 			} catch (DataIntegrityViolationException e) {
-				System.out.println("Block/Tx was not saved - already exists");
+				logger.info("Block/Tx was not saved - already exists");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -411,6 +239,13 @@ public class DbService {
 			}
 		}
 		return count;
+	}
+
+	public Transaction getTxByTxid(String txid) {
+		// Block b = mongo.findOne(new
+		// Query(Criteria.where("transactions.txid").is(txid)), Transaction.class);
+		// b.getTransactions()
+		return txRepo.findFirstByTxid(txid);
 	}
 }
 

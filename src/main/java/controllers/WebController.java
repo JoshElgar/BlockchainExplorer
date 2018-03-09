@@ -3,6 +3,8 @@ package controllers;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +19,8 @@ import services.DbService;
 @Controller
 public class WebController {
 
+	private static final Logger logger = LogManager.getLogger(WebController.class);
+
 	@Autowired
 	DbService dbService;
 
@@ -25,20 +29,20 @@ public class WebController {
 
 	@RequestMapping(value = { "/", "/home" })
 	public String home(Model m) {
-		System.out.println("Serving home.html");
+		logger.info("Serving home.html");
 		return "home";
 	}
 
 	@RequestMapping(value = "/data")
 	public String data(Model m) {
-		System.out.println("Serving data.html");
+		logger.info("Serving data.html");
 
 		return "data";
 	}
 
 	@RequestMapping(value = "/block/{blockHash}")
 	public String serveBlockPage(@PathVariable("blockHash") String blockHash, Model m) {
-		System.out.println("Serving block.html");
+		logger.info("Serving block.html");
 
 		Map<String, Object> attribs = new HashMap<String, Object>();
 
@@ -48,7 +52,7 @@ public class WebController {
 		}
 
 		// try and retrieve block from DB, fallback to querying daemon
-		Block block = dbService.blockRepo.findFirstByHash(blockHash);
+		Block block = dbService.mongoRepo.findFirstByHash(blockHash);
 
 		if (block == null) {
 			block = daemonService.getBlockByHash(blockHash);
@@ -67,20 +71,24 @@ public class WebController {
 
 	}
 
-	@RequestMapping(value = "/tx/{txHash}")
-	public String serveTxPage(@PathVariable("txHash") String txHash, Model m) {
-		System.out.println("Serving tx.html");
+	@RequestMapping(value = "/tx/{txid}")
+	public String serveTxPage(@PathVariable("txid") String txid, Model m) {
+		logger.info("Serving tx.html");
 
 		Map<String, Object> attribs = new HashMap<String, Object>();
 
-		switch (txHash) {
-		case "test":
-			txHash = "00000000000000000024fb37364cbf81fd49cc2d51c09c75c35433c3a1945d04";
+		Transaction tx = dbService.getTxByTxid(txid);
+
+		if (tx == null) {
+			tx = daemonService.getTxByTxid(txid);
+			if (tx == null) {
+				attribs.put("found", false);
+				m.addAllAttributes(attribs);
+				return "tx";
+			}
 		}
 
-		// try and retrieve block from DB, fallback to querying daemon
-		// Transaction tx = dbService.txRepo.findFirstByHash(txHash);
-		Transaction tx = daemonService.getTxByTxid(txHash);
+		attribs.put("found", true);
 		attribs.put("tx", tx);
 		m.addAllAttributes(attribs);
 
@@ -90,7 +98,7 @@ public class WebController {
 
 	@RequestMapping(value = "/testportal")
 	public String testportal(Model m) {
-		System.out.println("Serving testportal.html");
+		logger.info("Serving testportal.html");
 		return "testPortal";
 	}
 

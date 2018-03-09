@@ -8,18 +8,19 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
-import repositories.BlockRepository;
+import entities.Block;
+import repositories.MongoUserRepository;
 
-@EnableJpaRepositories("repositories")
+@EnableMongoRepositories("repositories")
 @EntityScan("entities")
 @SpringBootApplication(scanBasePackages = { "home", "controllers", "services", "entities", "repositories", "configs" })
 @EnableAutoConfiguration
 public class Application {
 
 	@Autowired
-	BlockRepository repository;
+	MongoUserRepository mongoRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
@@ -29,12 +30,15 @@ public class Application {
 	public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
 		return args -> {
 
+			Block b = new Block("12345");
+			// mongoRepository.save(b);
+
 			/*
-			 * System.out.println("Let's inspect the beans provided by Spring Boot:");
+			 * logger.info("Let's inspect the beans provided by Spring Boot:");
 			 * 
 			 * String[] beanNames = ctx.getBeanDefinitionNames(); Arrays.sort(beanNames);
 			 * 
-			 * for (String beanName : beanNames) { System.out.println(beanName); }
+			 * for (String beanName : beanNames) { logger.info(beanName); }
 			 */
 
 		};
