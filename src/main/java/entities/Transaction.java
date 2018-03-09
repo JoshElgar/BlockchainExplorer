@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Column;
-import javax.persistence.Id;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -15,14 +14,12 @@ public class Transaction implements Serializable {
 
 	private static final long serialVersionUID = -3009157732242241606L;
 
-	@Id
+	@org.springframework.data.annotation.Id
 	@JsonProperty("hash")
 	@Column(name = "hash", unique = true)
 	private String hash;
 
-	@JsonProperty("blockhash")
-	@Column(name = "blockhash")
-	private String blockhash;
+	private String blockHash;
 
 	@JsonProperty("txid")
 	@Column(name = "txid")
@@ -48,10 +45,8 @@ public class Transaction implements Serializable {
 
 	}
 
-	public Transaction(String hash, String blockhash, String txid, int bytesize, int version, List<TxVin> txVin,
-			List<TxVout> txVout) {
+	public Transaction(String hash, String txid, int bytesize, int version, List<TxVin> txVin, List<TxVout> txVout) {
 		this.hash = hash;
-		this.blockhash = blockhash;
 		this.txid = txid;
 		this.bytesize = bytesize;
 		this.version = version;
@@ -65,20 +60,11 @@ public class Transaction implements Serializable {
 
 	@Override
 	public String toString() {
-		return String.format("@Transaction[hash=%s, blockhash=%s, txid=%s, bytesize=%d, version=%d]", hash, blockhash,
-				txid, bytesize, version);
-	}
-
-	public void setBlockHash(String blockhash) {
-		this.blockhash = blockhash;
+		return String.format("@Transaction[hash=%s, txid=%s, bytesize=%d, version=%d]", hash, txid, bytesize, version);
 	}
 
 	public String getHash() {
 		return hash;
-	}
-
-	public String getBlockHash() {
-		return blockhash;
 	}
 
 	public String getTxid() {
@@ -95,6 +81,14 @@ public class Transaction implements Serializable {
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	public String getBlockHash() {
+		return blockHash;
+	}
+
+	public void setBlockHash(String blockHash) {
+		this.blockHash = blockHash;
 	}
 
 }

@@ -6,8 +6,8 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Embedded;
-import javax.persistence.Id;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -21,7 +21,7 @@ public class Block implements Serializable {
 
 	private static final long serialVersionUID = -3009157732242241606L;
 
-	@Id // primary key
+	@Id
 	private String hash;
 
 	@JsonProperty("height")
@@ -168,5 +168,13 @@ public class Block implements Serializable {
 
 	public List<Transaction> getTransactions() {
 		return this.transactions;
+	}
+
+	public void setNumTx(int numTx) {
+		this.numTx = numTx;
+	}
+
+	public void setTransactions(List<Transaction> transactions) {
+		this.transactions = transactions;
 	}
 }

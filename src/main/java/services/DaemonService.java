@@ -9,6 +9,8 @@ import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -20,6 +22,8 @@ import entities.Transaction;
 
 @Service
 public class DaemonService {
+
+	private static final Logger logger = LogManager.getLogger(DaemonService.class);
 
 	public Map<String, Object> getChainInfoMap() {
 
@@ -39,7 +43,7 @@ public class DaemonService {
 			chainMap.put("bestblockhash", tree.get("bestblockhash").asText());
 
 		} catch (HttpHostConnectException e) {
-			System.out.println("Could not connect to daemon : probably offline");
+			logger.info("Could not connect to daemon : probably offline");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -86,7 +90,7 @@ public class DaemonService {
 			String txInfo = EntityUtils.toString(txResponse.getEntity());
 			tx = new ObjectMapper().readValue(txInfo, Transaction.class);
 		} catch (JsonParseException e) {
-			System.out.println("Invalid transaction, could not be retrieved.");
+			logger.info("Invalid transaction, could not be retrieved.");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

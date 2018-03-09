@@ -127,7 +127,7 @@ function updateLiveTx() {
     var highestTxs = txList.slice(0, 10);
     
     highestTxs.forEach(function(tx) {
-        var link = "http://localhost:8080/tx/" + tx.hash;
+        var link = "http://localhost:8080/tx/" + tx.txid;
         var txRow = "<tr><td><a href='" + link + "'>" + tx.hash + "</a></td></tr>";
         liveTxTable.first("tbody").prepend(txRow);
     });
