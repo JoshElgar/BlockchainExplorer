@@ -62,12 +62,13 @@ public class DbService {
 		// mongo.insert(new Block("55555", 55, 100, new Timestamp(500000000)),
 		// "blocks");
 
-		logger.info("SYNC ::: Syncing database with blockchain.");
+		logger.info("Syncing database with blockchain.");
 
 		Map<String, Object> chainInfo = daemonService.getChainInfoMap();
 
 		int currentBlocks = (int) chainInfo.get("currentBlocks");
 		String blockToGet = (String) chainInfo.get("bestblockhash");
+		logger.info("Best block hash retrieved from daemon chaininfo: " + blockToGet);
 
 		int minBlockHeight = currentBlocks - 5; // for testing
 
@@ -75,18 +76,26 @@ public class DbService {
 		Block matchingBlock = mongoRepo.findFirstByHash(blockToGet);
 		boolean syncedAll = (matchingBlock == null ? false : true);
 
+		if (syncedAll) {
+			logger.info("Best block in DB, assume synced.");
+		} else {
+			logger.info("Best block not found in DB.");
+		}
+
 		while (!syncedAll) {
 			try {
 
 				Block generatedBlock = daemonService.getBlockByHash(blockToGet);
 
 				if (generatedBlock.getHeight() < minBlockHeight) {
-					logger.info("SYNC ::: Not one of the last 5 blocks in blockchain, finished syncing.");
+					logger.info("Not one of the last 5 blocks in blockchain, finished syncing.");
 					syncedAll = true;
 
 				} else {
 
-					logger.info("SYNC ::: Saving block with hash:" + generatedBlock.getHash());
+					logger.info("Saving block with hash:" + generatedBlock.getHash());
+
+					logger.info("Block time: " + generatedBlock.getTime());
 					// mongoRepo.save(generatedBlock);
 					mongo.save(generatedBlock);
 
@@ -109,7 +118,7 @@ public class DbService {
 				e.printStackTrace();
 			}
 
-			logger.info("SYNC ::: Blocks in repo: " + mongoRepo.count());
+			logger.info("Blocks in repo: " + mongoRepo.count());
 
 		}
 	}
@@ -173,7 +182,11 @@ public class DbService {
 
 		Block b = mongoRepo.findFirstByOrderByHeightDesc();
 
-		List<Transaction> txs = b.getTransactions().subList(0, 5);
+		List<Transaction> txs = new ArrayList<Transaction>();
+
+		if (b != null && b.getTransactions().size() >= 5) {
+			txs = b.getTransactions().subList(0, 5);
+		}
 
 		return txs;
 	}

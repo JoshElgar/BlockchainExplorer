@@ -35,23 +35,18 @@ public class Transaction implements Serializable {
 
 	@JsonProperty("vin")
 	@JsonDeserialize(using = vinDeserialiser.class)
-	public List<TxVin> txVin;
+	private List<TxVin> txVin;
 
 	@JsonProperty("vout")
 	@JsonDeserialize(using = voutDeserialiser.class)
-	public List<TxVout> txVout;
+	private List<TxVout> txVout;
+
+	// @JsonDeserialize(using = scriptPubKeyDeserialiser.class)
+	@JsonProperty("scriptPubKey")
+	private ScriptPubKey scriptPubKey;
 
 	protected Transaction() {
 
-	}
-
-	public Transaction(String hash, String txid, int bytesize, int version, List<TxVin> txVin, List<TxVout> txVout) {
-		this.hash = hash;
-		this.txid = txid;
-		this.bytesize = bytesize;
-		this.version = version;
-		this.txVin = txVin;
-		this.txVout = txVout;
 	}
 
 	public Transaction(String hash) {
@@ -79,16 +74,36 @@ public class Transaction implements Serializable {
 		return version;
 	}
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-
 	public String getBlockHash() {
 		return blockHash;
 	}
 
 	public void setBlockHash(String blockHash) {
 		this.blockHash = blockHash;
+	}
+
+	public List<TxVin> getTxVin() {
+		return txVin;
+	}
+
+	public void setTxVin(List<TxVin> txVin) {
+		this.txVin = txVin;
+	}
+
+	public List<TxVout> getTxVout() {
+		return txVout;
+	}
+
+	public void setTxVout(List<TxVout> txVout) {
+		this.txVout = txVout;
+	}
+
+	public ScriptPubKey getScriptPubKey() {
+		return scriptPubKey;
+	}
+
+	public void setScriptPubKey(ScriptPubKey scriptPubKey) {
+		this.scriptPubKey = scriptPubKey;
 	}
 
 }

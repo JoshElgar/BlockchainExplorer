@@ -5,8 +5,6 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Embedded;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -14,6 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @Document(collection = "blocks")
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -35,7 +34,7 @@ public class Block implements Serializable {
 	@JsonProperty("confirmations")
 	private int confirmations;
 
-	// @JsonDeserialize(using = DateDeserialiser.class)
+	@JsonDeserialize(using = DateDeserialiser.class)
 	@JsonProperty("time")
 	private Date time;
 
@@ -63,7 +62,6 @@ public class Block implements Serializable {
 	@JsonProperty("difficulty")
 	private float difficulty;
 
-	@Embedded
 	@JsonInclude()
 	@JsonProperty("tx")
 	private List<Transaction> transactions;
