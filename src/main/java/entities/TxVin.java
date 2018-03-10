@@ -14,66 +14,93 @@ public class TxVin implements Serializable {
 
 	@JsonProperty("txhash")
 	@Column(name = "txhash")
-	public String txhash;
+	private String txhash;
 
 	@JsonProperty("coinbase")
 	@Column(name = "coinbase")
-	public String coinbase;
+	private String coinbase;
 
 	@JsonProperty("txid")
 	@Column(name = "txid")
-	public String txid;
+	private String txid;
 
 	@JsonProperty("sequence")
-	@Column(name = "vinsequence")
-	public int vinsequence;
+	@Column(name = "sequence")
+	private long sequence;
 
 	@JsonProperty("vout")
 	@Column(name = "vout")
-	public int vout;
+	private long vout;
+
+	@JsonProperty("scriptPubKey")
+	private ScriptPubKey scriptPubKey;
 
 	protected TxVin() {
 	}
 
-	public TxVin(String coinbase, int vinsequence) {
+	public TxVin(String coinbase, long vinsequence) {
 		super();
 		this.coinbase = coinbase;
-		this.vinsequence = vinsequence;
+		this.sequence = vinsequence;
 	}
 
-	public TxVin(String txid, int vout, int vinsequence) {
+	public TxVin(String txid, long vout, long vinsequence) {
 		super();
 		this.txid = txid;
 		this.vout = vout;
-		this.vinsequence = vinsequence;
+		this.sequence = vinsequence;
 	}
 
 	public boolean isCoinbase() {
 		return coinbase == null ? false : true;
 	}
 
-	public String getCoinbase() {
-		return coinbase;
-	}
-
-	public String getTxHash() {
+	public String getTxhash() {
 		return txhash;
 	}
 
-	public int getSequence() {
-		return vinsequence;
+	public void setTxhash(String txhash) {
+		this.txhash = txhash;
+	}
+
+	public String getCoinbase() {
+		return coinbase;
 	}
 
 	public void setCoinbase(String coinbase) {
 		this.coinbase = coinbase;
 	}
 
-	public void setTxHash(String txHash) {
-		this.txhash = txHash;
+	public String getTxid() {
+		return txid;
 	}
 
-	public void setSequence(int sequence) {
-		this.vinsequence = sequence;
+	public void setTxid(String txid) {
+		this.txid = txid;
+	}
+
+	public long getVinsequence() {
+		return sequence;
+	}
+
+	public void setVinsequence(long vinsequence) {
+		this.sequence = vinsequence;
+	}
+
+	public long getVout() {
+		return vout;
+	}
+
+	public void setVout(long vout) {
+		this.vout = vout;
+	}
+
+	public ScriptPubKey getScriptPubKey() {
+		return scriptPubKey;
+	}
+
+	public void setScriptPubKey(ScriptPubKey scriptPubKey) {
+		this.scriptPubKey = scriptPubKey;
 	}
 
 }

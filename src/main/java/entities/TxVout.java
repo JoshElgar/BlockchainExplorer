@@ -20,6 +20,9 @@ public class TxVout implements Serializable {
 	@Column(name = "value")
 	private long value;
 
+	@JsonProperty("scriptPubKey")
+	private ScriptPubKey scriptPubKey;
+
 	protected TxVout() {
 	}
 
@@ -42,5 +45,13 @@ public class TxVout implements Serializable {
 
 	public void setValue(long value) {
 		this.value = value;
+	}
+
+	public ScriptPubKey getScriptPubKey() {
+		return scriptPubKey;
+	}
+
+	public void setScriptPubKey(ScriptPubKey scriptPubKey) {
+		this.scriptPubKey = scriptPubKey;
 	}
 }

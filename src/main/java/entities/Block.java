@@ -62,7 +62,6 @@ public class Block implements Serializable {
 	@JsonProperty("difficulty")
 	private float difficulty;
 
-	@JsonInclude()
 	@JsonProperty("tx")
 	private List<Transaction> transactions;
 

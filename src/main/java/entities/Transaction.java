@@ -5,45 +5,37 @@ import java.util.List;
 
 import javax.persistence.Column;
 
+import org.springframework.data.annotation.Id;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Transaction implements Serializable {
 
 	private static final long serialVersionUID = -3009157732242241606L;
 
-	@org.springframework.data.annotation.Id
+	@Id
 	@JsonProperty("hash")
-	@Column(name = "hash", unique = true)
+	@Column(unique = true)
 	private String hash;
 
 	private String blockHash;
 
 	@JsonProperty("txid")
-	@Column(name = "txid")
 	private String txid;
 
 	@JsonProperty("vsize")
-	@Column(name = "bytesize")
 	private int bytesize;
 
 	@JsonProperty("version")
-	@Column(name = "version")
 	private int version;
 
 	@JsonProperty("vin")
-	@JsonDeserialize(using = vinDeserialiser.class)
 	private List<TxVin> txVin;
 
 	@JsonProperty("vout")
-	@JsonDeserialize(using = voutDeserialiser.class)
 	private List<TxVout> txVout;
-
-	// @JsonDeserialize(using = scriptPubKeyDeserialiser.class)
-	@JsonProperty("scriptPubKey")
-	private ScriptPubKey scriptPubKey;
 
 	protected Transaction() {
 
@@ -96,14 +88,6 @@ public class Transaction implements Serializable {
 
 	public void setTxVout(List<TxVout> txVout) {
 		this.txVout = txVout;
-	}
-
-	public ScriptPubKey getScriptPubKey() {
-		return scriptPubKey;
-	}
-
-	public void setScriptPubKey(ScriptPubKey scriptPubKey) {
-		this.scriptPubKey = scriptPubKey;
 	}
 
 }
