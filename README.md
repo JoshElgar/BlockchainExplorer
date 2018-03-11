@@ -1,3 +1,3 @@
 # BlockchainExplorer
 
-Built with Spring MVC, Postgres, Thymeleaf using bitcoind.
+Built with Spring MVC/Boot/Security, MongoDB, Thymeleaf using bitcoind.
