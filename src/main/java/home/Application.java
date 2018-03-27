@@ -10,8 +10,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
-import entities.Block;
-import repositories.MongoUserRepository;
+import repositories.BlockUserRepository;
 
 @EnableMongoRepositories("repositories")
 @EntityScan("entities")
@@ -20,7 +19,7 @@ import repositories.MongoUserRepository;
 public class Application {
 
 	@Autowired
-	MongoUserRepository mongoRepository;
+	BlockUserRepository mongoRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
@@ -29,9 +28,6 @@ public class Application {
 	@Bean
 	public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
 		return args -> {
-
-			Block b = new Block("12345");
-			// mongoRepository.save(b);
 
 			/*
 			 * logger.info("Let's inspect the beans provided by Spring Boot:");

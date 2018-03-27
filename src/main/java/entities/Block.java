@@ -65,13 +65,8 @@ public class Block implements Serializable {
 	@JsonProperty("tx")
 	private List<Transaction> transactions;
 
-	// 2 constructors: protected used by Spring JPA, public for creating instances
-	protected Block() {
+	public Block() {
 
-	}
-
-	public Block(String hash) {
-		this.hash = hash;
 	}
 
 	public Block(String hash, int height, int numTx, Timestamp time) {

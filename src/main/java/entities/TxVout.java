@@ -2,8 +2,6 @@ package entities;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -13,11 +11,9 @@ public class TxVout implements Serializable {
 	private static final long serialVersionUID = -2969447956057942695L;
 
 	@JsonProperty("txhash")
-	@Column(name = "txhash")
 	private String txhash;
 
 	@JsonProperty("value")
-	@Column(name = "value")
 	private long value;
 
 	@JsonProperty("scriptPubKey")

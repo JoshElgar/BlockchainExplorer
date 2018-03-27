@@ -23,7 +23,7 @@ function connect() {
     
     stompClient.connect({}, function (frame) {
         //setConnected(true);
-        console.log('Connected: \n' + frame);
+        //console.log('Connected: \n' + frame);
         
         updateLastTxSerial();
         updateLastBlockHeight();

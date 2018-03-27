@@ -2,8 +2,6 @@ package entities;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -13,23 +11,18 @@ public class TxVin implements Serializable {
 	private static final long serialVersionUID = 3510862926366378424L;
 
 	@JsonProperty("txhash")
-	@Column(name = "txhash")
 	private String txhash;
 
 	@JsonProperty("coinbase")
-	@Column(name = "coinbase")
 	private String coinbase;
 
 	@JsonProperty("txid")
-	@Column(name = "txid")
 	private String txid;
 
 	@JsonProperty("sequence")
-	@Column(name = "sequence")
 	private long sequence;
 
 	@JsonProperty("vout")
-	@Column(name = "vout")
 	private long vout;
 
 	@JsonProperty("scriptPubKey")

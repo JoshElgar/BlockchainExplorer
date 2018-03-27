@@ -3,21 +3,20 @@ package entities;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.persistence.Column;
-
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Document
 public class Transaction implements Serializable {
 
 	private static final long serialVersionUID = -3009157732242241606L;
 
 	@Id
 	@JsonProperty("hash")
-	@Column(unique = true)
 	private String hash;
 
 	private String blockHash;
@@ -37,7 +36,7 @@ public class Transaction implements Serializable {
 	@JsonProperty("vout")
 	private List<TxVout> txVout;
 
-	protected Transaction() {
+	public Transaction() {
 
 	}
 

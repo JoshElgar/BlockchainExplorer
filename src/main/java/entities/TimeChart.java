@@ -1,6 +1,6 @@
 package entities;
 
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 public class TimeChart extends ChartData {
@@ -9,9 +9,9 @@ public class TimeChart extends ChartData {
 
 	public List<String> blockHash;
 	public List<Integer> txCount;
-	public List<Timestamp> blockTime;
+	public List<Date> blockTime;
 
-	public TimeChart(List<String> blockHash, List<Integer> txCount, List<Timestamp> blockTime) {
+	public TimeChart(List<String> blockHash, List<Integer> txCount, List<Date> blockTime) {
 		super();
 		this.blockHash = blockHash;
 		this.txCount = txCount;

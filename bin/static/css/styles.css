@@ -32,13 +32,14 @@ DB TESTING PORTAL
 NAVBAR
 */
 .navbar {
-    background: rgba(53,53,53, 1);
+    background: rgba(62, 47, 91, .5);
     padding: 0;
-    border-bottom: .5vh solid rgba(154,160,168, .5);
+    border-bottom: .5vh solid #261132;
+    border-top: .5vh solid #261132;
 }
 
 .navbar-brand {
-    margin-left: 20vw;
+    margin-left: 5vw;
     font-size: 24px;
 }
 
@@ -47,6 +48,10 @@ a.navbar-brand {
     max-width: 30vw;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.nav-form {
+    margin-right: 5vw;
 }
 
 .full-page {
@@ -105,7 +110,7 @@ a.navbar-brand {
     margin: 5vw;
     position: relative;
     display:inline-flex;
-    height: 25vh;
-    width: 25vh;
+    height: 35vh;
+    width: 35vh;
 }
 

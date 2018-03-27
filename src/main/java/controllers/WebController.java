@@ -52,7 +52,7 @@ public class WebController {
 		}
 
 		// try and retrieve block from DB, fallback to querying daemon
-		Block block = dbService.mongoRepo.findFirstByHash(blockHash);
+		Block block = dbService.blockRepo.findFirstByHash(blockHash);
 
 		if (block == null) {
 			block = daemonService.getBlockByHash(blockHash);
@@ -71,16 +71,16 @@ public class WebController {
 
 	}
 
-	@RequestMapping(value = "/tx/{txid}")
-	public String serveTxPage(@PathVariable("txid") String txid, Model m) {
+	@RequestMapping(value = "/tx/{value}")
+	public String serveTxPage(@PathVariable("value") String value, Model m) {
 		logger.info("Serving tx.html");
 
 		Map<String, Object> attribs = new HashMap<String, Object>();
 
-		Transaction tx = dbService.getTxByTxid(txid);
+		Transaction tx = dbService.getTx(value);
 
 		if (tx == null) {
-			tx = daemonService.getTxByTxid(txid);
+			tx = daemonService.getTxByTxid(value);
 			if (tx == null) {
 				attribs.put("found", false);
 				m.addAllAttributes(attribs);

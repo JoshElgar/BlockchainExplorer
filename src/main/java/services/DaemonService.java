@@ -75,7 +75,7 @@ public class DaemonService {
 
 	}
 
-	public Transaction getTxByTxid(String Txid) {
+	public Transaction getTxByTxid(String txid) {
 
 		Transaction tx = null;
 
@@ -85,7 +85,7 @@ public class DaemonService {
 			CloseableHttpClient httpclient = HttpClients.createDefault();
 
 			// get next block
-			HttpGet httpgetTx = new HttpGet("http://localhost:8332/rest/tx/" + Txid + ".json");
+			HttpGet httpgetTx = new HttpGet("http://localhost:8332/rest/tx/" + txid + ".json");
 			txResponse = httpclient.execute(httpgetTx);
 			String txInfo = EntityUtils.toString(txResponse.getEntity());
 			tx = new ObjectMapper().readValue(txInfo, Transaction.class);

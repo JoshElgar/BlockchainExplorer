@@ -1,15 +1,11 @@
 package services;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.sql.DataSource;
+import java.util.stream.Collectors;
 
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -32,8 +28,7 @@ import entities.Block;
 import entities.ChartData;
 import entities.TimeChart;
 import entities.Transaction;
-import repositories.MongoUserRepository;
-import repositories.TransactionRepository;
+import repositories.BlockUserRepository;
 
 @EnableScheduling
 @Service
@@ -42,13 +37,7 @@ public class DbService {
 	private static final Logger logger = LogManager.getLogger(DbService.class);
 
 	@Autowired
-	DataSource ds;
-
-	@Autowired
-	public MongoUserRepository mongoRepo;
-
-	@Autowired
-	public TransactionRepository txRepo;
+	public BlockUserRepository blockRepo;
 
 	@Autowired
 	DaemonService daemonService;
@@ -73,11 +62,11 @@ public class DbService {
 		int minBlockHeight = currentBlocks - 5; // for testing
 
 		// does repo contain latest block hash
-		Block matchingBlock = mongoRepo.findFirstByHash(blockToGet);
-		boolean syncedAll = (matchingBlock == null ? false : true);
+		Block matchingBlock = blockRepo.findFirstByHash(blockToGet);
+		boolean syncedAll = (((matchingBlock == null) || (blockRepo.count()) < 5) ? false : true);
 
 		if (syncedAll) {
-			logger.info("Best block in DB, assume synced.");
+			logger.info("Best block in DB + more than 5 blocks, assumed synced.");
 		} else {
 			logger.info("Best block not found in DB.");
 		}
@@ -92,24 +81,9 @@ public class DbService {
 					syncedAll = true;
 
 				} else {
-
 					logger.info("Saving block with hash:" + generatedBlock.getHash());
-
 					logger.info("Block time: " + generatedBlock.getTime());
-					// mongoRepo.save(generatedBlock);
 					mongo.save(generatedBlock);
-
-					/*
-					 * String blockHash = generatedBlock.getHash();
-					 * 
-					 * for (Transaction t : generatedBlock.getTransactions()) {
-					 * t.setBlockHash(blockHash); for (TxVin txVin : t.txVin) {
-					 * txVin.setTxHash(t.getHash()); } for (TxVout txVout : t.txVout) {
-					 * txVout.setTxHash(t.getHash()); } }
-					 * upsertTxs(generatedBlock.getTransactions());
-					 * upsertTxVinVout(generatedBlock.getTransactions());
-					 */
-
 				}
 
 				blockToGet = generatedBlock.getPrevBlockHash();
@@ -118,7 +92,7 @@ public class DbService {
 				e.printStackTrace();
 			}
 
-			logger.info("Blocks in repo: " + mongoRepo.count());
+			logger.info("Blocks in repo: " + blockRepo.count());
 
 		}
 	}
@@ -126,41 +100,29 @@ public class DbService {
 	public List<ChartData> getChartData() {
 		List<ChartData> chartData = new ArrayList<ChartData>();
 
-		chartData.add(new BarChart(5, 10));
-
 		List<String> blockHashes = new ArrayList<String>();
 		List<Integer> txCounts = new ArrayList<Integer>();
-		List<Timestamp> blockTimes = new ArrayList<Timestamp>();
+		List<Date> blockTimes = new ArrayList<Date>();
 
-		String sql = "SELECT t.blockhash, COUNT(t.blockhash), b.time " + "FROM transaction AS t "
-				+ "LEFT JOIN block AS b ON b.hash=t.blockhash " + "GROUP BY t.blockhash, b.time ORDER BY b.time;";
+		List<Block> allBlocks = blockRepo.findAll();
 
-		Connection conn = null;
+		for (Block b : allBlocks) {
+			blockHashes.add(b.getHash());
 
-		try {
-			conn = ds.getConnection();
-			PreparedStatement ps = conn.prepareStatement(sql);
-			ResultSet rs = ps.executeQuery();
+			int blockTxs = b.getTransactions().size();
+			b.setNumTx(blockTxs);
+			txCounts.add(b.getNumTx());
 
-			while (rs.next()) {
+			blockTimes.add(b.getTime());
 
-				blockHashes.add(rs.getString("blockhash"));
-				txCounts.add(rs.getInt("count"));
-				blockTimes.add(rs.getTimestamp("time"));
-
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
 		}
 
+		int txCount, blockCount;
+
+		txCount = 5;
+		blockCount = allBlocks.size();
+
+		chartData.add(new BarChart(txCount, blockCount));
 		chartData.add(new TimeChart(blockHashes, txCounts, blockTimes));
 
 		return chartData;
@@ -168,10 +130,10 @@ public class DbService {
 
 	public List<Block> getLimitedNewBlocks() {
 
-		List<Block> blocks = mongoRepo.findTop5ByOrderByHeightDesc();
+		List<Block> blocks = blockRepo.findTop5ByOrderByHeightDesc();
 
 		for (Block b : blocks) {
-			b.setNumTx(getNumTxForBlockHash(b.getHash()));
+			b.setNumTx(b.getTransactions().size());
 		}
 
 		return blocks;
@@ -180,7 +142,7 @@ public class DbService {
 
 	public List<Transaction> getLimitedNewTx() {
 
-		Block b = mongoRepo.findFirstByOrderByHeightDesc();
+		Block b = blockRepo.findFirstByOrderByHeightDesc();
 
 		List<Transaction> txs = new ArrayList<Transaction>();
 
@@ -198,7 +160,7 @@ public class DbService {
 	public void updateLastBlock() {
 
 		// finds newest block hash in DB
-		Block block = mongoRepo.findFirstByOrderByHeightDesc();
+		Block block = blockRepo.findFirstByOrderByHeightDesc();
 		if (block == null) {
 
 		} else {
@@ -213,7 +175,7 @@ public class DbService {
 
 				ObjectMapper mapper = new ObjectMapper();
 				Block generatedBlock = mapper.readValue(blockInfo, Block.class);
-				mongoRepo.save(generatedBlock);
+				blockRepo.save(generatedBlock);
 
 			} catch (DataIntegrityViolationException e) {
 				logger.info("Block/Tx was not saved - already exists");
@@ -223,43 +185,56 @@ public class DbService {
 		}
 	}
 
-	public int getNumTxForBlockHash(String blockhash) {
+	public Transaction getTx(String value) {
 
-		String sql = "SELECT COUNT(*) FROM transaction WHERE blockhash='" + blockhash + "';";
+		Block b = blockRepo.findBlockContainingTxWithTxid(value);
 
-		Connection conn = null;
-
-		int count = 0;
-
-		try {
-			conn = ds.getConnection();
-			PreparedStatement ps = conn.prepareStatement(sql);
-			ResultSet rs = ps.executeQuery();
-			if (rs.next()) {
-
-				count = rs.getInt("count");
-
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
+		if (b != null) {
+			List<Transaction> txs = b.getTransactions().stream().filter(t -> t.getTxid().equals(value))
+					.collect(Collectors.toList());
+			return txs.get(0);
+		} else {
+			b = blockRepo.findBlockContainingTxWithHash(value);
+			if (b != null) {
+				List<Transaction> txs = b.getTransactions().stream().filter(t -> t.getHash().equals(value))
+						.collect(Collectors.toList());
+				return txs.get(0);
 			}
 		}
-		return count;
+
+		return new Transaction();
+
 	}
 
-	public Transaction getTxByTxid(String txid) {
-		// Block b = mongo.findOne(new
-		// Query(Criteria.where("transactions.txid").is(txid)), Transaction.class);
-		// b.getTransactions()
-		return txRepo.findFirstByTxid(txid);
+	/*
+	 * Implements the search function: looks for blocks or txs with fields could
+	 * match a given value. Returns a map of type and the block hash or txid
+	 * required for JS to navigate to right page.
+	 */
+	public Map<String, String> searchFor(String value) {
+
+		Map<String, String> result = new HashMap<String, String>();
+
+		// try and find matching block or tx
+		if (blockRepo.findFirstByHash(value) != null) {
+			result.put("block", value);
+		} else {
+			Block b = blockRepo.findBlockContainingTxWithHash(value);
+			if (b != null) {
+				String txid = b.getTransactions().stream().filter(t -> t.getHash().equals(value))
+						.collect(Collectors.toList()).get(0).getTxid();
+				result.put("tx", txid);
+			} else if (blockRepo.findBlockContainingTxWithTxid(value) != null) {
+				result.put("tx", value);
+			}
+		}
+
+		logger.info("Search for found result: " + result);
+
+		return result;
+
 	}
+
 }
 
 // batch block queries:

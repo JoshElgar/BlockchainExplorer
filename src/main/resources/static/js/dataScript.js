@@ -23,19 +23,19 @@ function createTimeChart(data) {
             datasets: [{
                 label: 'Transactions',
                 data: data[1].txCount,
-                backgroundColor: '#fe8b36',
-                borderColor: '#fe8b36',
+                backgroundColor: '#b9b1b1',
+                borderColor: '#000000',
             }]
         },
         options: {
+        	legend: {
+        		usePointStyle: true
+        	},
             scales: {
                 xAxes: [{
                     type: 'time',
                     display: true,
-                    distribution: 'series',
-                    time: {
-                        unit: 'minute'
-                    }
+                    distribution: 'linear',
                 }],
                 yAxes: [{
                     ticks: {
