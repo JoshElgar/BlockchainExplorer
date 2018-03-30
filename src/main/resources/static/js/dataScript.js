@@ -43,7 +43,11 @@ function createTimeChart(data) {
                     }
                 }]
             },
-            maintainAspectRatio: false
+            maintainAspectRatio: false,
+            title: {
+                display: true,
+                text: 'Transactions per block over time'
+            }
         }
     });
 }
@@ -87,7 +91,11 @@ function createBarChart(data) {
                     }
                                     }]
             },
-            maintainAspectRatio: false
+            maintainAspectRatio: false,
+            title: {
+                display: true,
+                text: 'Total number of entities in DB'
+              }
         }
     });
 }

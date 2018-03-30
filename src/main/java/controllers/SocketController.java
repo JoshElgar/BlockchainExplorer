@@ -34,14 +34,26 @@ public class SocketController {
 
 	@MessageMapping("/socket/updateLastBlockHeight")
 	public void updateLastBlockHeight(Message<String> msg) {
-		lastBlockHeight = Integer.parseInt(msg.getPayload());
-		logger.info("New block height: " + lastBlockHeight);
+
+		if (msg.getPayload().isEmpty() || msg.getPayload() == null) {
+			logger.info("Block message is empty.");
+		} else {
+			logger.info("block payload: " + msg.getPayload());
+			lastBlockHeight = Integer.parseInt(msg.getPayload().toString());
+			logger.info("New block height: " + lastBlockHeight);
+		}
+
 	}
 
 	@MessageMapping("/socket/updateLastTxSerial")
 	public void updateLastTxSerial(Message<String> msg) {
-		lastTxSerialId = Integer.parseInt(msg.getPayload());
-		logger.info("New tx serial: " + lastTxSerialId);
+		if (msg.getPayload().isEmpty() || msg.getPayload() == null) {
+			logger.info("Tx message is empty.");
+		} else {
+			logger.info("tx payload: " + msg.getPayload());
+			lastTxSerialId = Integer.parseInt(msg.getPayload().toString());
+			logger.info("New tx serial: " + lastTxSerialId);
+		}
 	}
 
 	@Scheduled(fixedDelay = 10000)

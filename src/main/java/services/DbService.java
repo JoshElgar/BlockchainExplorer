@@ -1,6 +1,8 @@
 package services;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -106,23 +108,32 @@ public class DbService {
 
 		List<Block> allBlocks = blockRepo.findAll();
 
+		int totalTxCount = 0;
+		int totalBlockCount = 0;
+
+		Collections.sort(allBlocks, new Comparator<Block>() {
+			@Override
+			public int compare(Block b1, Block b2) {
+				return b1.getTime().compareTo(b2.getTime());
+			}
+		});
+
 		for (Block b : allBlocks) {
 			blockHashes.add(b.getHash());
 
 			int blockTxs = b.getTransactions().size();
 			b.setNumTx(blockTxs);
-			txCounts.add(b.getNumTx());
+
+			txCounts.add(blockTxs);
+			totalTxCount += blockTxs;
 
 			blockTimes.add(b.getTime());
 
 		}
 
-		int txCount, blockCount;
+		totalBlockCount = allBlocks.size();
 
-		txCount = 5;
-		blockCount = allBlocks.size();
-
-		chartData.add(new BarChart(txCount, blockCount));
+		chartData.add(new BarChart(totalTxCount, totalBlockCount));
 		chartData.add(new TimeChart(blockHashes, txCounts, blockTimes));
 
 		return chartData;
@@ -146,8 +157,8 @@ public class DbService {
 
 		List<Transaction> txs = new ArrayList<Transaction>();
 
-		if (b != null && b.getTransactions().size() >= 5) {
-			txs = b.getTransactions().subList(0, 5);
+		if (b != null && b.getTransactions().size() >= 10) {
+			txs = b.getTransactions().subList(0, 10);
 		}
 
 		return txs;
