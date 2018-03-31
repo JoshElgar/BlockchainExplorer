@@ -1,5 +1,2 @@
 src/main/resources/application.properties
 bin/application.properties
-bin/
-build/
-.gradle/
