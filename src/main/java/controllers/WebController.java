@@ -36,8 +36,19 @@ public class WebController {
 	@RequestMapping(value = "/data")
 	public String data(Model m) {
 		logger.info("Serving data.html");
-
 		return "data";
+	}
+
+	@RequestMapping(value = "/apidocs")
+	public String apidocs(Model m) {
+		logger.info("Serving apidocs.html");
+		return "apidocs";
+	}
+
+	@RequestMapping(value = "/testportal")
+	public String testportal(Model m) {
+		logger.info("Serving testportal.html");
+		return "testPortal";
 	}
 
 	@RequestMapping(value = "/block/{blockHash}")
@@ -94,12 +105,6 @@ public class WebController {
 
 		return "tx";
 
-	}
-
-	@RequestMapping(value = "/testportal")
-	public String testportal(Model m) {
-		logger.info("Serving testportal.html");
-		return "testPortal";
 	}
 
 }

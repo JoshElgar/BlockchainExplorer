@@ -1,0 +1,90 @@
+<!DOCTYPE HTML>
+
+
+<html>
+
+<head>
+    <title>Data</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    </link>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.min.js"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+    <!-- StompJS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+
+    <!-- User CSS -->
+    <link rel="stylesheet" href="../static/css/styles.css" th:href="@{/css/styles.css}">
+    </link>
+
+    <!--  User JS -->
+    <script src="../static/js/dataScript.js" th:src="@{/js/dataScript.js}"></script>
+
+</head>
+
+<body>
+    <div class="container-fluid full-page">
+
+        <nav class="navbar top-bar navbar-expand-lg navbar-light">
+            <a class="navbar-brand" href="http://localhost:8080/home">Home</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="http://localhost:8080/data">Data</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="http://localhost:8080/apidocs">API</a>
+                    </li>
+                </ul>
+                <form id="searchForm" class="nav-form form-inline my-2 my-lg-0">
+                    <input id="searchFormInput" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"></input>
+                    <button id="searchFormButton" class="btn btn-outline-success my-2 my-sm-0" type="button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    
+                </form>
+            </div>
+        </nav>
+        
+        
+        <div class="whole-page">
+            <div class="page-panel">
+
+                <div class="data-widget">
+                    <canvas id="chart1"></canvas>
+                </div>
+                
+                <div class="data-widget">
+                    <canvas id="chart2"></canvas>
+                </div>
+                
+                <div class="data-widget">
+                    <canvas id="chart3"></canvas>
+                </div>
+                
+                
+                
+                
+                
+                
+            </div>
+        </div>
+
+    </div>
+</body>
+
+</html>
