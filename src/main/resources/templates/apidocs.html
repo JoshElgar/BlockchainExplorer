@@ -4,12 +4,16 @@
 <html>
 
 <head>
-    <title>Data</title>
+    <title>API Docs</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
     </link>
+
+    <!-- Font Awesome JS -->
+    <script src="https://use.fontawesome.com/releases/v5.0.8/js/solid.js" integrity="sha384-+Ga2s7YBbhOD6nie0DzrZpJes+b2K1xkpKxTFFcx59QmVPaSA8c7pycsNaFwUK6l" crossorigin="anonymous"></script>
+    <script src="https://use.fontawesome.com/releases/v5.0.8/js/fontawesome.js" integrity="sha384-7ox8Q2yzO/uWircfojVuCQOZl+ZZBg2D2J5nkpLqzH1HY0C1dHlTKIbpRz/LG23c" crossorigin="anonymous"></script>
 
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
@@ -23,12 +27,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 
+    <!-- Pretty Print (Google) -->
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+
     <!-- User CSS -->
     <link rel="stylesheet" href="../static/css/styles.css" th:href="@{/css/styles.css}">
     </link>
 
     <!--  User JS -->
+    <script src="/js/globalScript.js"></script>
     <script src="../static/js/dataScript.js" th:src="@{/js/dataScript.js}"></script>
+
 
 </head>
 
@@ -55,32 +64,28 @@
                     <button id="searchFormButton" class="btn btn-outline-success my-2 my-sm-0" type="button">
                         <i class="fas fa-search"></i>
                     </button>
-                    
+
                 </form>
             </div>
         </nav>
-        
-        
+
+
         <div class="whole-page">
             <div class="page-panel">
+                <div class="jumbotron">
+                    <h1 class="display-4">API Documentation</h1>
+                    <p class="lead">This API allows you to query various information about the network and it's state, as well as information about individual blocks and transactions. </p>
+                    <hr class="my-4">
+                    <h2>Base URL</h2>
+                    <hr class="my-2">
+                    <p>All accessible URLs are accessed with the following base:</p>
+                    <pre class="prettyprint">http://localhost:8080/api</pre>
 
-                <div class="data-widget">
-                    <canvas id="chart1"></canvas>
+                    <p class="lead">
+                        <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+                    </p>
                 </div>
-                
-                <div class="data-widget">
-                    <canvas id="chart2"></canvas>
-                </div>
-                
-                <div class="data-widget">
-                    <canvas id="chart3"></canvas>
-                </div>
-                
-                
-                
-                
-                
-                
+
             </div>
         </div>
 

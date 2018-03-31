@@ -32,7 +32,6 @@ DB TESTING PORTAL
 NAVBAR
 */
 .navbar {
-    background: rgba(62, 47, 91, .5);
     padding: 0;
     border-bottom: .5vh solid #261132;
     border-top: .5vh solid #261132;
@@ -44,8 +43,6 @@ NAVBAR
 }
 
 a.navbar-brand {
-    color: white;
-    max-width: 30vw;
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -65,11 +62,6 @@ a.navbar-brand {
 .whole-page {
     padding: 0;
     min-height: 100%;
-    background:
-      linear-gradient(217deg, rgba(209,204,220,.8), rgba(255,0,0,0) 70.71%),
-      linear-gradient(127deg, rgba(142,177,199,.8), rgba(0,255,0,0) 70.71%),
-      linear-gradient(336deg, rgba(154,160,168,.8), rgba(0,0,255,0) 70.71%),
-        linear-gradient(37deg, rgba(154,160,168,.8), rgba(0,0,255,0) 70.71%);
     overflow: auto;
 }
 
