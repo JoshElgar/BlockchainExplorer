@@ -1,6 +1,6 @@
 $(document).ready(function () {
     
-    $.ajax("http://localhost:8080/data/getchartdata", {
+    $.ajax("http://localhost:8080/api/data/getchartdata", {
         success: function(data) {
             createBarChart(data);
             createTimeChart(data);
@@ -43,7 +43,11 @@ function createTimeChart(data) {
                     }
                 }]
             },
-            maintainAspectRatio: false
+            maintainAspectRatio: false,
+            title: {
+                display: true,
+                text: 'Transactions per block over time'
+            }
         }
     });
 }
@@ -87,7 +91,11 @@ function createBarChart(data) {
                     }
                                     }]
             },
-            maintainAspectRatio: false
+            maintainAspectRatio: false,
+            title: {
+                display: true,
+                text: 'Total number of entities in DB'
+              }
         }
     });
 }

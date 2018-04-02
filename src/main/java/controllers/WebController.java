@@ -45,22 +45,23 @@ public class WebController {
 		return "apidocs";
 	}
 
+	@RequestMapping(value = "/login")
+	public String login(Model m) {
+		logger.info("Serving login.html");
+		return "login";
+	}
+
 	@RequestMapping(value = "/testportal")
 	public String testportal(Model m) {
 		logger.info("Serving testportal.html");
 		return "testPortal";
 	}
 
-	@RequestMapping(value = "/block/{blockHash}")
+	@RequestMapping(value = "/api/block/{blockHash}")
 	public String serveBlockPage(@PathVariable("blockHash") String blockHash, Model m) {
 		logger.info("Serving block.html");
 
 		Map<String, Object> attribs = new HashMap<String, Object>();
-
-		switch (blockHash) {
-		case "test":
-			blockHash = "00000000000000000024fb37364cbf81fd49cc2d51c09c75c35433c3a1945d04";
-		}
 
 		// try and retrieve block from DB, fallback to querying daemon
 		Block block = dbService.blockRepo.findFirstByHash(blockHash);
@@ -82,7 +83,7 @@ public class WebController {
 
 	}
 
-	@RequestMapping(value = "/tx/{value}")
+	@RequestMapping(value = "/api/tx/{value}")
 	public String serveTxPage(@PathVariable("value") String value, Model m) {
 		logger.info("Serving tx.html");
 

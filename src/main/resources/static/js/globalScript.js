@@ -5,7 +5,7 @@ $(document).ready(function () {
 
         console.log("Submitting search for: " + $("#searchFormInput").val());
 
-        var url = "http://localhost:8080/search/".concat($("#searchFormInput").val());
+        var url = "http://localhost:8080/api/search/".concat($("#searchFormInput").val());
 
         $.ajax(url, {
             success: function (data) {
@@ -13,9 +13,9 @@ $(document).ready(function () {
                 if (data === "none") {
                     alert("Couldn't find any matching blocks/txs.");
                 } else if (data === "block") {
-                    window.location.replace("http://localhost:8080/block/" + data.hash);
+                    window.location.replace("http://localhost:8080/api/block/" + data.hash);
                 } else if (data === "tx") {
-                    window.location.replace("http://localhost:8080/tx/" + data.txid);
+                    window.location.replace("http://localhost:8080/api/tx/" + data.txid);
                 }
             },
             error: function (result) {

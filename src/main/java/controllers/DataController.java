@@ -21,7 +21,7 @@ public class DataController {
 	@Autowired
 	public DbService dbService;
 
-	@RequestMapping(value = "/data/getchartdata")
+	@RequestMapping(value = "/api/data/getchartdata")
 	public List<ChartData> getChartData() {
 		logger.info("DataController ::: Getting chart data.");
 
@@ -29,7 +29,7 @@ public class DataController {
 
 	}
 
-	@RequestMapping(value = "/search/{value}")
+	@RequestMapping(value = "/api/search/{value}")
 	public Map<String, String> searchDB(@PathVariable("value") String value) {
 		logger.info("Searching for value: " + value);
 

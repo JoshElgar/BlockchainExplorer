@@ -19,6 +19,7 @@ jar {
 
 repositories {
     mavenCentral()
+    maven { url 'https://repo.spring.io/milestone' }
 }
 
 sourceCompatibility = 1.8
@@ -31,12 +32,18 @@ dependencies {
   
     compile("org.springframework.boot:spring-boot-starter-thymeleaf")
     compile("org.springframework.boot:spring-boot-devtools")
+    
     //compile("org.springframework.boot:spring-boot-starter-security")
+    compile("org.springframework.security:spring-security-web:4.2.4.RELEASE")
+    compile("org.springframework.security:spring-security-config:4.2.4.RELEASE")
+    compile("org.thymeleaf.extras:thymeleaf-extras-springsecurity4:2.1.2.RELEASE")
+    
+    
 
 	//compile ("org.mongodb:mongodb-driver:3.6.3")
 	compile("org.springframework.boot:spring-boot-starter-data-mongodb")
     
-       compile group: 'org.springframework', name: 'spring-websocket', version: '4.3.12.RELEASE'
+    compile group: 'org.springframework', name: 'spring-websocket', version: '4.3.12.RELEASE'
 	compile group: 'org.springframework', name: 'spring-messaging', version: '4.3.12.RELEASE'
     
     

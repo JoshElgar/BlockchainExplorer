@@ -81,7 +81,7 @@
                                 Block Hash
                             </td>
                             <td id="version-value" class="table-value">
-                                <a th:text="${tx?.blockHash}?: 'null'" th:href="@{http://localhost:8080/block/{blockHash}(blockHash=${tx?.blockHash})}"></a>
+                                <a th:text="${tx?.blockHash}?: 'null'" th:href="@{http://localhost:8080/api/block/{blockHash}(blockHash=${tx?.blockHash})}"></a>
                                 
                             </td>
                         </tr>

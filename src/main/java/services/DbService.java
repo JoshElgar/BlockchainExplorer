@@ -18,7 +18,6 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -32,6 +31,9 @@ import entities.TimeChart;
 import entities.Transaction;
 import repositories.BlockUserRepository;
 
+/*
+ * This service provides database services to the rest of the application - performing regular database-daemon syncs, updating + retrieval of blocks/txs and data for the chart page.
+ */
 @EnableScheduling
 @Service
 public class DbService {
@@ -44,14 +46,12 @@ public class DbService {
 	@Autowired
 	DaemonService daemonService;
 
-	@Autowired
-	private MongoOperations mongo;
-
+	/*
+	 * Syncs the database using the daemon - finds the best blockhash, gets the 5
+	 * previous blocks sequentially.
+	 */
 	@Scheduled(fixedDelay = 10000)
 	public void sync() {
-
-		// mongo.insert(new Block("55555", 55, 100, new Timestamp(500000000)),
-		// "blocks");
 
 		logger.info("Syncing database with blockchain.");
 
@@ -85,7 +85,7 @@ public class DbService {
 				} else {
 					logger.info("Saving block with hash:" + generatedBlock.getHash());
 					logger.info("Block time: " + generatedBlock.getTime());
-					mongo.save(generatedBlock);
+					blockRepo.save(generatedBlock);
 				}
 
 				blockToGet = generatedBlock.getPrevBlockHash();
@@ -99,6 +99,10 @@ public class DbService {
 		}
 	}
 
+	/*
+	 * Retrieves a List<ChartData> for the chart page. NOTE: The order is important:
+	 * 1 - Num Tx/Block Bar Chart, 2 - Block Time Chart with Tx counts
+	 */
 	public List<ChartData> getChartData() {
 		List<ChartData> chartData = new ArrayList<ChartData>();
 
@@ -139,6 +143,9 @@ public class DbService {
 		return chartData;
 	}
 
+	/*
+	 * Gets a limited number of the newest blocks to be streamed to the home page.
+	 */
 	public List<Block> getLimitedNewBlocks() {
 
 		List<Block> blocks = blockRepo.findTop5ByOrderByHeightDesc();
@@ -151,6 +158,10 @@ public class DbService {
 
 	}
 
+	/*
+	 * Gets a limited number of the newest transactions to be streamed to the home
+	 * page.
+	 */
 	public List<Transaction> getLimitedNewTx() {
 
 		Block b = blockRepo.findFirstByOrderByHeightDesc();
@@ -196,6 +207,10 @@ public class DbService {
 		}
 	}
 
+	/*
+	 * Gets a transaction from the database based on a value (can be either a txid
+	 * or tx hash)
+	 */
 	public Transaction getTx(String value) {
 
 		Block b = blockRepo.findBlockContainingTxWithTxid(value);
@@ -203,13 +218,17 @@ public class DbService {
 		if (b != null) {
 			List<Transaction> txs = b.getTransactions().stream().filter(t -> t.getTxid().equals(value))
 					.collect(Collectors.toList());
-			return txs.get(0);
+			Transaction t = txs.get(0);
+			t.setBlockHash(b.getHash());
+			return t;
 		} else {
 			b = blockRepo.findBlockContainingTxWithHash(value);
 			if (b != null) {
 				List<Transaction> txs = b.getTransactions().stream().filter(t -> t.getHash().equals(value))
 						.collect(Collectors.toList());
-				return txs.get(0);
+				Transaction t = txs.get(0);
+				t.setBlockHash(b.getHash());
+				return t;
 			}
 		}
 
@@ -253,7 +272,3 @@ public class DbService {
 // -get block hashes from header, add to list
 // -craft request objects from list
 // -post crafted requests in a json batch to daemon
-
-// Instant instantTime = Instant.ofEpochMilli(time * 1000L);
-// Timestamp ts = instantTime != null ? new
-// Timestamp(instantTime.toEpochMilli()) : null;

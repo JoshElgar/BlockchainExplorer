@@ -1,6 +1,6 @@
 $(document).ready(function () {
     
-    $.ajax("http://localhost:8080/data/getchartdata", {
+    $.ajax("http://localhost:8080/api/data/getchartdata", {
         success: function(data) {
             createBarChart(data);
             createTimeChart(data);

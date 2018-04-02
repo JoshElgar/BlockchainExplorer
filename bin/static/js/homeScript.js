@@ -107,7 +107,7 @@ function updateLiveBlocks() {
 	
 	highestBlocks.forEach(function(block) {
         var blockDate = new Date(block.time).toUTCString();
-        var link = "http://localhost:8080/block/" + block.hash;
+        var link = "http://localhost:8080/api/block/" + block.hash;
 		var blockRow = "<tr><td><a href='" + link + "'>" + block.height + "</td><td>" + block.numTx + "</td><td>" + blockDate + "</td></tr>";
         liveBlockTable.first("tbody").prepend(blockRow);
     });
@@ -127,7 +127,7 @@ function updateLiveTx() {
     var highestTxs = txList.slice(0, 10);
     
     highestTxs.forEach(function(tx) {
-        var link = "http://localhost:8080/tx/" + tx.txid;
+        var link = "http://localhost:8080/api/tx/" + tx.txid;
         var txRow = "<tr><td><a href='" + link + "'>" + tx.hash + "</a></td></tr>";
         liveTxTable.first("tbody").prepend(txRow);
     });
