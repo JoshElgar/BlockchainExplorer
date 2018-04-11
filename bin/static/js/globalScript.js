@@ -1,5 +1,9 @@
 $(document).ready(function () {
 
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+
 
     $("#searchFormButton").click(function () {
 
@@ -9,13 +13,13 @@ $(document).ready(function () {
 
         $.ajax(url, {
             success: function (data) {
-                console.log("Found: " + data);
-                if (data === "none") {
+                console.log("Found: " + data.constructor.name);
+                if ('none' in data) {
                     alert("Couldn't find any matching blocks/txs.");
-                } else if (data === "block") {
-                    window.location.replace("http://localhost:8080/api/block/" + data.hash);
-                } else if (data === "tx") {
-                    window.location.replace("http://localhost:8080/api/tx/" + data.txid);
+                } else if ('block' in data) {
+                    window.location.replace("http://localhost:8080/api/block/" + data.block);
+                } else if ('tx' in data) {
+                    window.location.replace("http://localhost:8080/api/tx/" + data.tx);
                 }
             },
             error: function (result) {

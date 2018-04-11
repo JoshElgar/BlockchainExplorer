@@ -25,8 +25,8 @@ public class TxVin implements Serializable {
 	@JsonProperty("vout")
 	private long vout;
 
-	@JsonProperty("scriptPubKey")
-	private ScriptPubKey scriptPubKey;
+	@JsonProperty("scriptSig")
+	private ScriptSig scriptSig;
 
 	protected TxVin() {
 	}
@@ -72,12 +72,12 @@ public class TxVin implements Serializable {
 		this.txid = txid;
 	}
 
-	public long getVinsequence() {
+	public long getSequence() {
 		return sequence;
 	}
 
-	public void setVinsequence(long vinsequence) {
-		this.sequence = vinsequence;
+	public void setSequence(long sequence) {
+		this.sequence = sequence;
 	}
 
 	public long getVout() {
@@ -88,12 +88,12 @@ public class TxVin implements Serializable {
 		this.vout = vout;
 	}
 
-	public ScriptPubKey getScriptPubKey() {
-		return scriptPubKey;
+	public ScriptSig getScriptSig() {
+		return scriptSig;
 	}
 
-	public void setScriptPubKey(ScriptPubKey scriptPubKey) {
-		this.scriptPubKey = scriptPubKey;
+	public void setScriptSig(ScriptSig scriptSig) {
+		this.scriptSig = scriptSig;
 	}
 
 }

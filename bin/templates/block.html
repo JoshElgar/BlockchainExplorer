@@ -6,6 +6,9 @@
 <head>
     <title th:text="'Block #' + __${block.height}__">Block</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    
+    <!-- Popper.js for tooltips -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
@@ -73,17 +76,18 @@
 
         <div class="whole-page">
             <div class="card">
+                
+                <div class="card-header">
+                    <div class="card-header-left" data-toggle="tooltip" data-placement="right" title="One or more transactions prefaced by a block header and protected by proof of work. Blocks are the data stored on the block chain.">
+                        Block
+                    </div>
+                </div>
 
                 <table class="table table-responsive card-table">
+                    
                     <tbody>
-                        <!--
-                        <tr th:each="var : ${#vars}">
-                            <td th:text="${var.key}"></td>
-                            <td th:text="${var.value}"></td>
-                        </tr>
-                        -->
                         <tr>
-                            <td class="table-label">
+                            <td class="table-label"  data-toggle="tooltip" data-placement="left" title="The hash of this block’s block header encoded as hex in RPC byte order.">
                                 Hash
                             </td>
                             <td id="hash-value" class="table-value" th:text="${block.hash}?: 'null'">
@@ -91,7 +95,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td class="table-label">
+                            <td class="table-label" data-toggle="tooltip" data-placement="left" title="The height of this block on its block chain.">
                                 Height
                             </td>
                             <td id="version-value" class="table-value" th:text="${block.height}?: 'null'">
@@ -99,7 +103,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td class="table-label">
+                            <td class="table-label" data-toggle="tooltip" data-placement="left" title="The value of the time field in the block header, indicating approximately when the block was created.">
                                 Time
                             </td>
                             <td id="time-value" class="table-value" th:text="${block.time}?: 'null'">
@@ -107,68 +111,68 @@
                             </td>
                         </tr>
                         <tr>
-                            <td class="table-label">
+                            <td class="table-label" data-toggle="tooltip" data-placement="left" title="The value of the nBits field in the block header, indicating the target threshold this block’s header had to pass.">
                                 Bits
                             </td>
                             <td id="bits-value" class="table-value" th:text="${block.bits}?: 'null'">
                             </td>
                         </tr>
                         <tr>
-                            <td class="table-label">
+                            <td class="table-label" data-toggle="tooltip" data-placement="left" title="This block’s version number.">
                                 Block Version
                             </td>
                             <td id="version-value" class="table-value" th:text="${block.BlockVersion}?: 'null'">
                             </td>
                         </tr>
                         <tr>
-                            <td class="table-label">
+                            <td class="table-label" data-toggle="tooltip" data-placement="left" title="The size of this block in serialized block format excluding witness data, counted in bytes.">
                                 Byte Size
                             </td>
                             <td id="version-value" class="table-value" th:text="${block.ByteSize}?: 'null'">
                             </td>
                         </tr>
                         <tr>
-                            <td class="table-label">
+                            <td class="table-label" data-toggle="tooltip" data-placement="left" title="The number of confirmations the transactions in this block have, starting at 1 when this block is at the tip of the best block chain. This score will be -1 if the the block is not part of the best block chain.">
                                 Confirmations
                             </td>
                             <td id="version-value" class="table-value" th:text="${block.confirmations}?: 'null'">
                             </td>
                         </tr>
                         <tr>
-                            <td class="table-label">
+                            <td class="table-label" data-toggle="tooltip" data-placement="left" title="The estimated amount of work done to find this block relative to the estimated amount of work done to find block 0">
                                 Difficulty
                             </td>
                             <td id="version-value" class="table-value" th:text="${block.difficulty}?: 'null'">
                             </td>
                         </tr>
                         <tr>
-                            <td class="table-label">
+                            <td class="table-label" data-toggle="tooltip" data-placement="left" title="The merkle root for this block, encoded as hex in RPC byte order.">
                                 Merkleroot
                             </td>
                             <td id="version-value" class="table-value" th:text="${block.merkleroot}?: 'null'">
                             </td>
                         </tr>
                         <tr>
-                            <td class="table-label">
+                            <td class="table-label" data-toggle="tooltip" data-placement="left" title="The nonce which was successful at turning this particular block into one that could be added to the best block chain.">
                                 Nonce
                             </td>
                             <td id="version-value" class="table-value" th:text="${block.nonce}?: 'null'">
                             </td>
                         </tr>
                         <tr>
-                            <td class="table-label">
+                            <td class="table-label" data-toggle="tooltip" data-placement="left" title="The hash of the next block on the best block chain, if known, encoded as hex in RPC byte order.">
                                 Next block
                             </td>
                             <td id="version-value" class="table-value">
-                                <a th:text="${block.NextBlockHash}?: 'null'" th:href="@{http://localhost:8080/block/{nextblockhash}(nextblockhash=${block.NextBlockHash})}"></a>
+                                <a th:text="${block.NextBlockHash}?: 'null'" th:href="@{http://localhost:8080/api/block/{nextblockhash}(nextblockhash=${block.NextBlockHash})}"></a>
                             </td>
                         </tr>
                         <tr>
-                            <td class="table-label">
+                            <td class="table-label" data-toggle="tooltip" data-placement="left" title="The hash of the header of the previous block, encoded as hex in RPC byte order.">
                                 Prev block hash
                             </td>
                             <td id="version-value" class="table-value">
-                                <a th:text="${block.PrevBlockHash}?: 'null'" th:href="@{http://localhost:8080/block/{prevblockhash}(prevblockhash=${block.PrevBlockHash})}"></a>
+                                <a th:text="${block.PrevBlockHash}?: 'null'" th:href="@{http://localhost:8080/api/block/{prevblockhash}(prevblockhash=${block.PrevBlockHash})}"></a>
                             </td>
                         </tr>
 

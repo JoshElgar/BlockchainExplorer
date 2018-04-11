@@ -6,6 +6,9 @@
 <head>
     <title>Tx</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    
+    <!-- Popper.js for tooltips -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
@@ -13,6 +16,10 @@
 
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    
+    <!-- Font Awesome JS -->
+    <script src="https://use.fontawesome.com/releases/v5.0.8/js/solid.js" integrity="sha384-+Ga2s7YBbhOD6nie0DzrZpJes+b2K1xkpKxTFFcx59QmVPaSA8c7pycsNaFwUK6l" crossorigin="anonymous"></script>
+    <script src="https://use.fontawesome.com/releases/v5.0.8/js/fontawesome.js" integrity="sha384-7ox8Q2yzO/uWircfojVuCQOZl+ZZBg2D2J5nkpLqzH1HY0C1dHlTKIbpRz/LG23c" crossorigin="anonymous"></script>
 
     <!-- Bootstrap JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
@@ -39,7 +46,7 @@
             <a class="navbar-brand" href="http://localhost:8080/home" th:text="'Transaction #' + ${tx?.hash}?: 'null'">Tx</a>
         </nav>
 -->
-        
+
         <nav class="navbar top-bar navbar-expand-lg navbar-light">
             <a class="navbar-brand" href="http://localhost:8080/home">Home</a>
 
@@ -61,32 +68,39 @@
                 </form>
             </div>
         </nav>
+
         <div class="whole-page">
             <div class="card">
 
+                <div class="card-header">
+                    <div class="card-header-left" data-toggle="tooltip" data-placement="top" title="An object describing a particular transaction within this block.">
+                        Transaction
+                    </div>
+                </div>
+
                 <table class="table table-responsive card-table">
                     <tbody>
-                        
-                        
+
+
                         <tr>
-                            <td class="table-label">
+                            <td class="table-label" data-toggle="tooltip" data-placement="left" title="The transaction hash. Differs from txid for witness transactions.">
                                 Hash
                             </td>
-                            <td id="hash-value" class="table-value" th:text="${tx?.hash}?: 'null'">
+                            <td class="table-value" th:text="${tx?.hash}?: 'null'">
 
                             </td>
                         </tr>
                         <tr>
-                            <td class="table-label">
+                            <td class="table-label"  data-toggle="tooltip" data-placement="left" title="The hash of the block this transaction belongs to.">
                                 Block Hash
                             </td>
                             <td id="version-value" class="table-value">
                                 <a th:text="${tx?.blockHash}?: 'null'" th:href="@{http://localhost:8080/api/block/{blockHash}(blockHash=${tx?.blockHash})}"></a>
-                                
+
                             </td>
                         </tr>
                         <tr>
-                            <td class="table-label">
+                            <td class="table-label" data-toggle="tooltip" data-placement="left" title="The transaction’s TXID encoded as hex in RPC byte order.">
                                 Txid
                             </td>
                             <td id="time-value" class="table-value" th:text="${tx?.txid}?: 'null'">
@@ -94,14 +108,14 @@
                             </td>
                         </tr>
                         <tr>
-                            <td class="table-label">
+                            <td class="table-label" data-toggle="tooltip" data-placement="left" title="The virtual transaction size. Differs from size for witness transactions.">
                                 Byte Size
                             </td>
                             <td id="bits-value" class="table-value" th:text="${tx?.ByteSize}?: 'null'">
                             </td>
                         </tr>
                         <tr>
-                            <td class="table-label">
+                            <td class="table-label" data-toggle="tooltip" data-placement="left" title="The transaction format version number.">
                                 Version
                             </td>
                             <td id="version-value" class="table-value" th:text="${tx?.version}?: 'null'">
@@ -112,10 +126,164 @@
                     </tbody>
 
                 </table>
-            </div>
-        </div>
 
+            </div>
+
+
+
+
+            <div th:each="txVin : ${tx.txVin}" class="card">
+
+                <div class="card-header">
+                    <div class="card-header-left" data-toggle="tooltip" data-placement="top" title="An object describing a particular transaction within this block.">
+                        TxVin
+                    </div>
+                </div>
+
+                <table class="table table-responsive card-table" th:if="${txVin.coinbase}">
+                    <tbody>
+
+
+                        <tr>
+                            <td class="table-label" data-toggle="tooltip" data-placement="left" title="An object describing a particular transaction within this block.">
+                                Coinbase
+                            </td>
+                            <td class="table-value" th:text="${txVin.coinbase}?: 'null'">
+
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="table-label"  data-toggle="tooltip" data-placement="left" title="An object describing a particular transaction within this block.">
+                                Sequence
+                            </td>
+                            <td class="table-value" th:text="${txVin.sequence}?: 'null'">
+
+                            </td>
+                        </tr>
+
+
+                    </tbody>
+                </table>
+
+
+
+                <table class="table table-responsive card-table" th:if="${txVin.txid}">
+                    <tbody>
+
+                        <tr>
+                            <td class="table-label"  data-toggle="tooltip" data-placement="left" title="An object describing a particular transaction within this block.">
+                                Txid
+                            </td>
+                            <td class="table-value" th:text="${txVin.txid}?: 'null'">
+
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="table-label" data-toggle="tooltip" data-placement="left" title="An object describing a particular transaction within this block.">
+                                Sequence
+                            </td>
+                            <td class="table-value" th:text="${txVin.sequence}?: 'null'">
+
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="table-label" data-toggle="tooltip" data-placement="left" title="An object describing a particular transaction within this block.">
+                                Vout
+                            </td>
+                            <td class="table-value" th:text="${txVin.vout}?: 'null'">
+
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+
+
+            </div>
+
+            <div th:each="txVout : ${tx.txVout}" class="card">
+
+                <div class="card-header">
+                    <div class="card-header-left" data-toggle="tooltip" data-placement="top" title="An object describing a particular transaction within this block.">
+                        TxVout
+                    </div>
+
+                    <div class="card-header-right">
+                        <div th:text="${txVout.value} + ' BTC'?: 'null'" data-toggle="tooltip" data-placement="top" title="An object describing a particular transaction within this block.">
+                        </div>
+                    </div>
+                </div>
+
+                <table class="table table-responsive card-table">
+
+                    <thead style="text-align: right">
+                        <tr>
+                            <th data-toggle="tooltip" data-placement="left" title="An object describing a particular transaction within this block.">
+                                ScriptPubKey
+                            </th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr>
+                            <td class="table-label" data-toggle="tooltip" data-placement="left" title="An object describing a particular transaction within this block.">
+                                Asm
+                            </td>
+                            <td class="table-value" th:text="${txVout.scriptPubKey.asm}?: 'null'">
+
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="table-label" data-toggle="tooltip" data-placement="left" title="An object describing a particular transaction within this block.">
+                                Hex
+                            </td>
+                            <td class="table-value" th:text="${txVout.scriptPubKey.hex}?: 'null'">
+
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="table-label" data-toggle="tooltip" data-placement="left" title="An object describing a particular transaction within this block.">
+                                ReqSigs
+                            </td>
+                            <td class="table-value" th:text="${txVout.scriptPubKey.reqsigs}?: 'null'">
+
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="table-label" data-toggle="tooltip" data-placement="left" title="An object describing a particular transaction within this block.">
+                                Type
+                            </td>
+                            <td class="table-value" th:text="${txVout.scriptPubKey.type}?: 'null'">
+
+                            </td>
+                        </tr>
+                        
+                        <tr th:each="address,iter : ${txVout.scriptPubKey.addresses}">
+                            <td class="table-label" th:text="'Address #' + ${iter.index}" data-toggle="tooltip" data-placement="left" title="An object describing a particular transaction within this block.">
+                            </td>
+                            <td class="table-value" th:text="${address}">
+                            </td>
+                        </tr>
+
+
+                    </tbody>
+                </table>
+
+            </div>
+
+
+
+        </div>
     </div>
+
+
 </body>
 
 </html>

@@ -14,7 +14,7 @@
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.min.js"></script>
-    
+
     <!-- Font Awesome JS -->
     <script src="https://use.fontawesome.com/releases/v5.0.8/js/solid.js" integrity="sha384-+Ga2s7YBbhOD6nie0DzrZpJes+b2K1xkpKxTFFcx59QmVPaSA8c7pycsNaFwUK6l" crossorigin="anonymous"></script>
     <script src="https://use.fontawesome.com/releases/v5.0.8/js/fontawesome.js" integrity="sha384-7ox8Q2yzO/uWircfojVuCQOZl+ZZBg2D2J5nkpLqzH1HY0C1dHlTKIbpRz/LG23c" crossorigin="anonymous"></script>
@@ -61,29 +61,128 @@
                 </form>
             </div>
         </nav>
-        
-        
-        <div class="whole-page">
-            <div class="page-panel">
 
-                <div class="data-widget">
-                    <canvas id="chart1"></canvas>
+
+        <div class="whole-page">
+            <div class="data-page-panel row">
+                
+                <div class="data-page-header">
+                    
+                    <div class="jumbotron">
+                        <h1>Statistics &amp; Charts</h1>
+                    </div>
+                    
                 </div>
                 
-                <div class="data-widget">
-                    <canvas id="chart2"></canvas>
+                
+                <div class="col">
+                    <div class="stats">
+
+                        <div class="card-header">
+                            <div class="card-header-left" data-toggle="tooltip" data-placement="top" title="An object describing a particular transaction within this block.">
+                                Chain Info
+                            </div>
+                        </div>
+
+                        <table class="table table-responsive card-table">
+                            <tbody>
+
+
+                                <tr>
+                                    <td class="table-label" data-toggle="tooltip" data-placement="left" title="">
+                                        Chain
+                                    </td>
+                                    <td class="table-value" th:text="${chainInfo.chain}?: 'null'">
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="table-label" data-toggle="tooltip" data-placement="left" title="">
+                                        Blocks
+                                    </td>
+                                    <td id="version-value" class="table-value">
+                                        <a th:text="${chainInfo.blocks}?: 'null'"></a>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="table-label" data-toggle="tooltip" data-placement="left" title="">
+                                        Headers
+                                    </td>
+                                    <td id="time-value" class="table-value" th:text="${chainInfo.headers}?: 'null'">
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="table-label" data-toggle="tooltip" data-placement="left" title="">
+                                        Best block hash
+                                    </td>
+                                    <td id="bits-value" class="table-value" th:text="${chainInfo.bestblockhash}?: 'null'">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="table-label" data-toggle="tooltip" data-placement="left" title="">
+                                        Difficulty
+                                    </td>
+                                    <td id="version-value" class="table-value" th:text="${chainInfo.difficulty}?: 'null'">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="table-label" data-toggle="tooltip" data-placement="left" title="">
+                                        Median Time
+                                    </td>
+                                    <td id="version-value" class="table-value" th:text="${chainInfo.mediantime}?: 'null'">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="table-label" data-toggle="tooltip" data-placement="left" title="">
+                                        Verification Progress
+                                    </td>
+                                    <td id="version-value" class="table-value" th:text="${chainInfo.verificationprogress}?: 'null'">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="table-label" data-toggle="tooltip" data-placement="left" title="">
+                                        Chainwork
+                                    </td>
+                                    <td id="version-value" class="table-value" th:text="${chainInfo.chainwork}?: 'null'">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="table-label" data-toggle="tooltip" data-placement="left" title="">
+                                        Pruned
+                                    </td>
+                                    <td id="version-value" class="table-value" th:text="${chainInfo.pruned}?: 'null'">
+                                    </td>
+                                </tr>
+
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
                 </div>
-                
-                <div class="data-widget">
-                    <canvas id="chart3"></canvas>
+                <div class="col">
+                    <div class="charts">
+
+                        <div class="data-widget">
+                            <canvas id="chart1"></canvas>
+                        </div>
+
+                        <div class="data-widget">
+                            <canvas id="chart2"></canvas>
+                        </div>
+
+                        <div class="data-widget">
+                            <canvas id="chart3"></canvas>
+                        </div>
+                    </div>
                 </div>
-                
-                
-                
-                
-                
-                
+
             </div>
+
+
         </div>
 
     </div>

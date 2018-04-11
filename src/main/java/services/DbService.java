@@ -26,9 +26,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import entities.BarChart;
 import entities.Block;
+import entities.ChainInfo;
 import entities.ChartData;
 import entities.TimeChart;
 import entities.Transaction;
+import entities.TxVin;
 import repositories.BlockUserRepository;
 
 /*
@@ -55,10 +57,10 @@ public class DbService {
 
 		logger.info("Syncing database with blockchain.");
 
-		Map<String, Object> chainInfo = daemonService.getChainInfoMap();
+		ChainInfo chainInfo = daemonService.getChainInfo();
 
-		int currentBlocks = (int) chainInfo.get("currentBlocks");
-		String blockToGet = (String) chainInfo.get("bestblockhash");
+		int currentBlocks = chainInfo.getBlocks();
+		String blockToGet = chainInfo.getBestblockhash();
 		logger.info("Best block hash retrieved from daemon chaininfo: " + blockToGet);
 
 		int minBlockHeight = currentBlocks - 5; // for testing
@@ -101,7 +103,7 @@ public class DbService {
 
 	/*
 	 * Retrieves a List<ChartData> for the chart page. NOTE: The order is important:
-	 * 1 - Num Tx/Block Bar Chart, 2 - Block Time Chart with Tx counts
+	 * 1 - Num Reg/Coinbase Tx Bar Chart, 2 - Block Time Chart with Tx counts
 	 */
 	public List<ChartData> getChartData() {
 		List<ChartData> chartData = new ArrayList<ChartData>();
@@ -112,9 +114,12 @@ public class DbService {
 
 		List<Block> allBlocks = blockRepo.findAll();
 
-		int totalTxCount = 0;
-		int totalBlockCount = 0;
+		int numCoinbaseTx = 0;
+		int numRegTx = 0;
 
+		/*
+		 * Sort all blocks by time, newest first
+		 */
 		Collections.sort(allBlocks, new Comparator<Block>() {
 			@Override
 			public int compare(Block b1, Block b2) {
@@ -125,19 +130,31 @@ public class DbService {
 		for (Block b : allBlocks) {
 			blockHashes.add(b.getHash());
 
-			int blockTxs = b.getTransactions().size();
+			List<Transaction> txs = b.getTransactions();
+
+			int blockTxs = txs.size();
 			b.setNumTx(blockTxs);
 
 			txCounts.add(blockTxs);
-			totalTxCount += blockTxs;
+
+			for (Transaction t : txs) {
+				for (TxVin txVin : t.getTxVin()) {
+					if (txVin.getCoinbase() == null) {
+						numRegTx++;
+					} else {
+						numCoinbaseTx++;
+					}
+				}
+			}
 
 			blockTimes.add(b.getTime());
 
 		}
 
-		totalBlockCount = allBlocks.size();
+		logger.info("Reg tx found: " + numRegTx);
+		logger.info("Coinbase tx found: " + numCoinbaseTx);
 
-		chartData.add(new BarChart(totalTxCount, totalBlockCount));
+		chartData.add(new BarChart(numRegTx, numCoinbaseTx));
 		chartData.add(new TimeChart(blockHashes, txCounts, blockTimes));
 
 		return chartData;
@@ -256,6 +273,8 @@ public class DbService {
 				result.put("tx", txid);
 			} else if (blockRepo.findBlockContainingTxWithTxid(value) != null) {
 				result.put("tx", value);
+			} else {
+				result.put("none", "none");
 			}
 		}
 

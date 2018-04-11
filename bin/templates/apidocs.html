@@ -70,7 +70,7 @@
         <div class="whole-page">
             <div class="page-panel">
 
-                <div class="jumbotron">
+                <div class="apidocs jumbotron">
                     <h2 class="display-4">API Documentation</h2>
                     <p class="lead">This API allows you to query various information about the network and it's state, as well as information about individual blocks and transactions. </p>
                     <hr class="my-4"></hr>
@@ -79,6 +79,8 @@
                     <hr class="my-3"></hr>
                     <p>The API is served over HTTP, and all accessible URLs are accessed with the following base:</p>
                     <pre class="prettyprint">http://localhost:8080/api</pre>
+                    <p>For example: </p>
+                    <pre class="prettyprint">http://localhost:8080/api/search/b081a9e6ff7abe3947c29bf4d5fd2fa6407d9457cc59b9d71321f4183ec61301</pre>
                     <hr class="my-2"></hr>
 
                     <br></br>
@@ -87,13 +89,146 @@
                     <p>Endpoints are the unique URLs that represent access to a specific set of data (resource). The following endpoints are provided:</p>
                     <hr class="my-3"></hr>
 
-                    <h4>Block</h4>
 
 
 
-                    <p class="lead">
-                        <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
-                    </p>
+
+                    <h5>Chart Data</h5>
+                    <pre class="prettyprint">/api/data/getchartdata</pre>
+                    <p>Returns chart data - bar charts, time charts.</p>
+<button type="button" class="btn btn-info" data-toggle="collapse" data-target="#chart-collapse">Example result</button>
+                    <pre id="chart-collapse" class="prettyprint collapse">[
+    {
+        "numPubKey": 93,
+        "numPubKeyHash": 560,
+        "numScriptHash": 74,
+        "numMultiSig": 5,
+        "numNullData": 2,
+        "numNonStandard": 3,
+        "numRegTx": 106750,
+        "numCoinbaseTx": 33
+    },
+    {
+        "blockHash": [
+            "000000000000000000475e9a79514ef000189ff598a5d63a00e34390199152bc",
+            "0000000000000000001af3b84bab65b3717e51823167e08db2ce11fe88fcc98e"
+        ],
+        "txCount": [
+            1531,
+            1273
+        ],
+        "blockTime": [
+            1523354372000,
+            1523355442000
+        ]
+    }
+]</pre>
+                    <br></br>
+
+                    <h5>Search</h5>
+                    <pre class="prettyprint">/api/search/{value}</pre>
+                    <p>This returns a Map&lt;String, String&gt; where the key represents the type of value being returned (either "tx", "block" or "none") and the value represents either a txid or a block hash, or is simply "none" if no matching Tx/Block could be found. The {value} can be either a block hash, a txid or a tx hash.</p>
+<button type="button" class="btn btn-info" data-toggle="collapse" data-target="#search-collapse">Example result</button>
+                    <pre id="search-collapse" class="prettyprint collapse">{
+    "tx": "12b2af9a8cf12c9650cef12f73394afde24a039d0574af4a92c85212405eb9b2"
+}</pre>
+                    <br></br>
+
+                    <h5>Block</h5>
+                    <pre class="prettyprint">/api/getobj/block/{blockhash}</pre>
+                    <p>Returns a block. Attemps to find it in the DB - if it doesn't exist there, fallsback to the daemon.</p>
+                    <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#block-collapse">Example result</button>
+                    <pre id="block-collapse" class="prettyprint collapse">{
+    "hash": "00000000000000000006f98444e2b6089ca7557333aa80bed799b1d9ecd6627f",
+    "prevBlockHash": "0000000000000000000f8ba8b4db8879c0348c0ad2256967cb193f5dbe324110",
+    "byteSize": 42204,
+    "nextBlockHash": null,
+    "blockVersion": 536870912,
+    "height": 517548,
+    "numTx": 0,
+    "confirmations": 1,
+    "time": 1523370626000,
+    "strippedsize": 42204,
+    "version": 536870912,
+    "nonce": 1843387225,
+    "merkleroot": "1ebdd3622d83a1d2b1565282bc355aeb7c7f8f721d9bd38719ad7302dd25dac5",
+    "previousblockhash": "0000000000000000000f8ba8b4db8879c0348c0ad2256967cb193f5dbe324110",
+    "nextblockhash": null,
+    "bits": "17502ab7",
+    "difficulty": 3511060530000,
+    "tx": [{
+            "blockHash": null,
+            "byteSize": 481,
+            "hash": "f3099e0b87ba9f9e6ef2fb7e42942d47f744c026da72d0b4da41c87d81e4958d",
+            "txid": "4bc8ba31934f72dbc06bf375ee8093d9a3a9de0b3d022826b97ba8f0f60e4244",
+            "vsize": 481,
+            "version": 1,
+            "vin": [
+                {
+                    "txhash": null,
+                    "coinbase": null,
+                    "txid": "8c951be58b14fb355131c97b303a19d6c71a73c6513dce14dbe02cd425175f09",
+                    "sequence": 4294967295,
+                    "vout": 0,
+                    "scriptSig": {
+                        "asm": "0020506086d8e76c6402866da8c9ba81affdbe0137ed9474b15c2f117aacca44a61c",
+                        "hex": "220020506086d8e76c6402866da8c9ba81affdbe0137ed9474b15c2f117aacca44a61c"
+                    }
+                }
+            ],
+            "vout": [
+                {
+                    "value": 0,
+                    "scriptPubKey": {
+                        "asm": "OP_HASH160 c04fd5e0a7bc9b0c12b013df169755b01e879634 OP_EQUAL",
+                        "hex": "a914c04fd5e0a7bc9b0c12b013df169755b01e87963487",
+                        "reqsigs": 0,
+                        "type": "scripthash",
+                        "addresses": [
+                            "3KDsJSUugd3g2dVZY6dRvCfU7okqbwiVcq"
+                        ]
+                    }
+                }
+            ]
+        }]</pre>
+                    <br></br>
+
+                    <h5>Tx</h5>
+                    <pre class="prettyprint">/api/getobj/tx/{value}</pre>
+                    <p>Returns a tx. Attemps to find it in the DB - if it doesn't exist there, fallsback to the daemon. {value} can represent either a txid or a tx hash.</p>
+<button type="button" class="btn btn-info" data-toggle="collapse" data-target="#tx-collapse">Example result</button>
+                    <pre id="tx-collapse" class="prettyprint collapse">{
+    "blockHash": "00000000000000000006f98444e2b6089ca7557333aa80bed799b1d9ecd6627f",
+    "byteSize": 216,
+    "hash": "1dd7e2a9ce15ce1b887ec6b5d9cbf2657bf7905a02b012d8baac2b7f8860a1d7",
+    "txid": "12b2af9a8cf12c9650cef12f73394afde24a039d0574af4a92c85212405eb9b2",
+    "vsize": 216,
+    "version": 2,
+    "vin": [
+        {
+            "txhash": null,
+            "coinbase": "03ace5070481cacc5a622f4254432e434f4d2ffabe6d6dc38ec3d883bd84812abc32cf6f62241b29875771f6fa04b314b917960aeaaa58010000000000000065449bfdd73e8e6300000000",
+            "txid": null,
+            "sequence": 4294967295,
+            "vout": 0,
+            "scriptSig": null
+        }
+    ],
+    "vout": [
+        {
+            "value": 12,
+            "scriptPubKey": {
+                "asm": "OP_DUP OP_HASH160 78ce48f88c94df3762da89dc8498205373a8ce6f OP_EQUALVERIFY OP_CHECKSIG",
+                "hex": "76a91478ce48f88c94df3762da89dc8498205373a8ce6f88ac",
+                "reqsigs": 0,
+                "type": "pubkeyhash",
+                "addresses": [
+                    "1C1mCxRukix1KfegAY5zQQJV7samAciZpv"
+                ]
+            }
+        }
+    ]
+}</pre>
                 </div>
 
             </div>

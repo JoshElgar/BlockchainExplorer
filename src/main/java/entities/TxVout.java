@@ -10,9 +10,6 @@ public class TxVout implements Serializable {
 
 	private static final long serialVersionUID = -2969447956057942695L;
 
-	@JsonProperty("txhash")
-	private String txhash;
-
 	@JsonProperty("value")
 	private long value;
 
@@ -25,14 +22,6 @@ public class TxVout implements Serializable {
 	public TxVout(long value) {
 		super();
 		this.value = value;
-	}
-
-	public String getTxHash() {
-		return txhash;
-	}
-
-	public void setTxHash(String txHash) {
-		this.txhash = txHash;
 	}
 
 	public long getValue() {

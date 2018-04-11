@@ -1,6 +1,6 @@
 $(document).ready(function () {
     
-    $.ajax("http://localhost:8080/api/data/getchartdata", {
+    $.ajax("http://localhost:8080/api/data/getdata", {
         success: function(data) {
             createBarChart(data);
             createTimeChart(data);
@@ -60,10 +60,10 @@ function createBarChart(data) {
     var myChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ["Blocks", "Txs"],
+            labels: ["Reg Txs", "Coinbase Txs"],
             datasets: [{
                 label: 'Total number',
-                data: [data[0].numTx, data[0].numBlocks],
+                data: [data[0].numRegTx, data[0].numCoinbaseTx],
                 backgroundColor: [
                                         'rgba(255, 99, 132, 0.2)',
                                         'rgba(54, 162, 235, 0.2)',
@@ -88,13 +88,14 @@ function createBarChart(data) {
                 yAxes: [{
                     ticks: {
                         beginAtZero: true
-                    }
+                    },
+                    type: 'logarithmic'
                                     }]
             },
             maintainAspectRatio: false,
             title: {
                 display: true,
-                text: 'Total number of entities in DB'
+                text: 'Types of transaction inputs in DB'
               }
         }
     });

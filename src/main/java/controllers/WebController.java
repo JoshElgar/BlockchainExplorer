@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import entities.Block;
+import entities.ChainInfo;
 import entities.Transaction;
 import services.DaemonService;
 import services.DbService;
@@ -33,12 +34,6 @@ public class WebController {
 		return "home";
 	}
 
-	@RequestMapping(value = "/data")
-	public String data(Model m) {
-		logger.info("Serving data.html");
-		return "data";
-	}
-
 	@RequestMapping(value = "/apidocs")
 	public String apidocs(Model m) {
 		logger.info("Serving apidocs.html");
@@ -55,6 +50,20 @@ public class WebController {
 	public String testportal(Model m) {
 		logger.info("Serving testportal.html");
 		return "testPortal";
+	}
+
+	@RequestMapping(value = "/data")
+	public String serveDataPage(Model m) {
+
+		Map<String, Object> attribs = new HashMap<String, Object>();
+		ChainInfo chainInfo = daemonService.getChainInfo();
+
+		attribs.put("chainInfo", chainInfo);
+
+		m.addAllAttributes(attribs);
+
+		logger.info("Serving data.html");
+		return "data";
 	}
 
 	@RequestMapping(value = "/api/block/{blockHash}")

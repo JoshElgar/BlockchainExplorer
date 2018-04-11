@@ -11,7 +11,7 @@ public class ScriptPubKey implements Serializable {
 
 	private static final long serialVersionUID = -5332448207449787645L;
 
-	protected ScriptPubKey() {
+	public ScriptPubKey() {
 	}
 
 	@JsonProperty("asm")

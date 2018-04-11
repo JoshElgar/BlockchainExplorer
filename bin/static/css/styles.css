@@ -71,7 +71,7 @@ a.navbar-brand {
 
 .card {
     margin-top: 5vh;
-    margin-left: 25vw;
+    margin-left: 15vw;
     margin-bottom: 5vh;
     width: fit-content;
     max-width: 80vw;
@@ -93,14 +93,14 @@ a.navbar-brand {
     text-overflow: ellipsis;
     overflow: hidden;
     text-align: right;
+    word-wrap: break-word;
     white-space: nowrap;
 }
 
 
 .data-widget {
-    margin: 5vw;
-    position: relative;
-    display:inline-flex;
+    margin: 2vw;
+    display: inline-flex;
     height: 35vh;
     width: 35vh;
 }
@@ -124,6 +124,45 @@ a.navbar-brand {
 }
 
 .login-button {
+    width: 100%;
+}
+
+.apidocs {
+    margin: 5vh 5vw;
+}
+
+.card-header {
+    background: rgba(224,224,224, 1);
+    width: 100%;
+    display: inline-flex;
+    justify-content: space-between;
+}
+
+.card-header-left {
+    line-height: 1.5rem;
+    font-size: 24px;
+    font-weight: bolder;
+}
+
+.card-header-right {
+    line-height: 1.5rem;
+    color: rgba(0,102,0, 1);
+    font-weight: bold;
+}
+
+.stats {
+    border: .3vh solid rgba(154,160,168, .5);
+    width: fit-content;
+}
+
+.charts {
+}
+
+.data-page-panel {
+    margin: 3vw 5vh;
+}
+
+.data-page-header {
     width: 100%;
 }
 

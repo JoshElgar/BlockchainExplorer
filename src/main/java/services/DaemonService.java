@@ -1,8 +1,5 @@
 package services;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.HttpHostConnectException;
@@ -14,10 +11,10 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import entities.Block;
+import entities.ChainInfo;
 import entities.Transaction;
 
 @Service
@@ -25,22 +22,18 @@ public class DaemonService {
 
 	private static final Logger logger = LogManager.getLogger(DaemonService.class);
 
-	public Map<String, Object> getChainInfoMap() {
+	public ChainInfo getChainInfo() {
 
-		Map<String, Object> chainMap = new HashMap<String, Object>();
+		ChainInfo chainInfo = new ChainInfo();
 
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 		CloseableHttpResponse chainResponse;
 		HttpGet httpChainInfo = new HttpGet("http://localhost:8332/rest/chaininfo.json");
 		try {
 			chainResponse = httpclient.execute(httpChainInfo);
-			String chainInfo = EntityUtils.toString(chainResponse.getEntity());
+			String chainInfoString = EntityUtils.toString(chainResponse.getEntity());
 
-			ObjectMapper mapper = new ObjectMapper();
-			JsonNode tree = mapper.readTree(chainInfo);
-
-			chainMap.put("currentBlocks", tree.get("blocks").asInt());
-			chainMap.put("bestblockhash", tree.get("bestblockhash").asText());
+			chainInfo = new ObjectMapper().readValue(chainInfoString, ChainInfo.class);
 
 		} catch (HttpHostConnectException e) {
 			logger.info("Could not connect to daemon : probably offline");
@@ -48,7 +41,7 @@ public class DaemonService {
 			e.printStackTrace();
 		}
 
-		return chainMap;
+		return chainInfo;
 
 	}
 
