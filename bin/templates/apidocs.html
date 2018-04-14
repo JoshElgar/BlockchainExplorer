@@ -82,6 +82,14 @@
                     <p>For example: </p>
                     <pre class="prettyprint">http://localhost:8080/api/search/b081a9e6ff7abe3947c29bf4d5fd2fa6407d9457cc59b9d71321f4183ec61301</pre>
                     <hr class="my-2"></hr>
+                    <br></br>
+
+                    <h3>Authentication</h3>
+<hr class="my-3"></hr>
+                    <p>Authentication can be done through the use of HTTP Basic Auth - the authentication details are included in the request URL or header.</p>
+                    <p>For example: </p>
+                    <pre class="prettyprint">http://username:password@localhost:8080/api/data/getchartdata</pre>
+                    <hr class="my-2"></hr>
 
                     <br></br>
                     <h3>Endpoints</h3>
@@ -96,7 +104,7 @@
                     <h5>Chart Data</h5>
                     <pre class="prettyprint">/api/data/getchartdata</pre>
                     <p>Returns chart data - bar charts, time charts.</p>
-<button type="button" class="btn btn-info" data-toggle="collapse" data-target="#chart-collapse">Example result</button>
+                    <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#chart-collapse">Example result</button>
                     <pre id="chart-collapse" class="prettyprint collapse">[
     {
         "numPubKey": 93,
@@ -128,7 +136,7 @@
                     <h5>Search</h5>
                     <pre class="prettyprint">/api/search/{value}</pre>
                     <p>This returns a Map&lt;String, String&gt; where the key represents the type of value being returned (either "tx", "block" or "none") and the value represents either a txid or a block hash, or is simply "none" if no matching Tx/Block could be found. The {value} can be either a block hash, a txid or a tx hash.</p>
-<button type="button" class="btn btn-info" data-toggle="collapse" data-target="#search-collapse">Example result</button>
+                    <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#search-collapse">Example result</button>
                     <pre id="search-collapse" class="prettyprint collapse">{
     "tx": "12b2af9a8cf12c9650cef12f73394afde24a039d0574af4a92c85212405eb9b2"
 }</pre>
@@ -196,7 +204,7 @@
                     <h5>Tx</h5>
                     <pre class="prettyprint">/api/getobj/tx/{value}</pre>
                     <p>Returns a tx. Attemps to find it in the DB - if it doesn't exist there, fallsback to the daemon. {value} can represent either a txid or a tx hash.</p>
-<button type="button" class="btn btn-info" data-toggle="collapse" data-target="#tx-collapse">Example result</button>
+                    <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#tx-collapse">Example result</button>
                     <pre id="tx-collapse" class="prettyprint collapse">{
     "blockHash": "00000000000000000006f98444e2b6089ca7557333aa80bed799b1d9ecd6627f",
     "byteSize": 216,
